@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, MessageCircle, TrendingUp, Heart, Share2,
-  BookOpen, AlertCircle, ChevronDown, ChevronUp, ExternalLink
+  BookOpen, AlertCircle, ChevronDown, ChevronUp, ExternalLink, Send, ShieldAlert
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
+import { getCommunityPosts, createCommunityPost, CommunityPost } from '@/lib/firestore';
 
 const TIPS: { icon: string; title: string; body: string }[] = [
   { icon: '🗓️', title: 'Register Early', body: 'Most countries require voter registration weeks before the election. Check your deadline now and don\'t miss it!' },
@@ -58,14 +59,78 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 export default function CommunityView() {
   const { country, setActiveNavTab } = useAppStore();
-  const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
+  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+  const [posts, setPosts] = useState<CommunityPost[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const [newPost, setNewPost] = useState('');
+  const [isPosting, setIsPosting] = useState(false);
+  const [postError, setPostError] = useState<string | null>(null);
 
-  const toggleLike = (i: number) => {
+  // Fetch real posts
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setLoadingPosts(true);
+      try {
+        const fetched = await getCommunityPosts(country);
+        setPosts(fetched);
+      } catch (err) {
+        console.error("Error fetching community posts:", err);
+      } finally {
+        setLoadingPosts(false);
+      }
+    };
+    fetchPosts();
+  }, [country]);
+
+  const toggleLike = (id: string) => {
     setLikedPosts(prev => {
       const next = new Set(prev);
-      next.has(i) ? next.delete(i) : next.add(i);
+      next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
+  };
+
+  const handlePostSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPost.trim()) return;
+    
+    setIsPosting(true);
+    setPostError(null);
+
+    try {
+      // 1. Check AI Moderation
+      const modRes = await fetch('/api/moderate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: newPost, country }),
+      });
+      const modData = await modRes.json();
+
+      if (!modData.safe) {
+        setPostError(modData.reason || "Post blocked by safety guidelines.");
+        setIsPosting(false);
+        return;
+      }
+
+      // 2. Safe to post! Save to Firestore.
+      // Generate a random anonymous handle and avatar
+      const randomId = Math.floor(1000 + Math.random() * 9000);
+      const avatars = ['🧑‍💻', '👩‍💼', '👨‍🎓', '👩‍🌾', '👴', '👩‍⚕️', '🥷', '🧑‍🚀'];
+      const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+
+      await createCommunityPost(`Voter_${randomId}`, randomAvatar, country, newPost);
+      
+      // Refresh posts
+      setNewPost('');
+      const fetched = await getCommunityPosts(country);
+      setPosts(fetched);
+      
+    } catch (err) {
+      console.error(err);
+      setPostError("Failed to publish post. Try again.");
+    } finally {
+      setIsPosting(false);
+    }
   };
 
   return (
@@ -120,36 +185,74 @@ export default function CommunityView() {
           <div className="space-y-4">
             <h2 className="text-base font-bold text-foreground flex items-center space-x-2">
               <MessageCircle className="w-4 h-4 text-primary" />
-              <span>Community Voices</span>
+              <span>Live Community Feed</span>
             </h2>
-            <div className="space-y-3">
-              {DISCUSSIONS.map((post, i) => (
-                <motion.div key={i} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
-                  className="glass-card rounded-2xl p-4 border border-white/[0.06] hover:border-white/[0.12] transition-all">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-xl">{post.avatar}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-1.5">
-                        <span className="text-sm font-semibold text-foreground">{post.name}</span>
-                        <span>{post.country}</span>
-                      </div>
-                      <span className="text-[10px] text-muted-foreground">{post.time}</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed mb-3">{post.message}</p>
-                  <div className="flex items-center space-x-3">
-                    <button onClick={() => toggleLike(i)}
-                      className={`flex items-center space-x-1 text-xs transition-colors ${likedPosts.has(i) ? 'text-rose-400' : 'text-muted-foreground hover:text-rose-400'}`}>
-                      <Heart className={`w-3.5 h-3.5 ${likedPosts.has(i) ? 'fill-rose-400' : ''}`} />
-                      <span>{post.likes + (likedPosts.has(i) ? 1 : 0)}</span>
-                    </button>
-                    <button className="flex items-center space-x-1 text-xs text-muted-foreground hover:text-primary transition-colors">
-                      <Share2 className="w-3.5 h-3.5" />
-                      <span>Share</span>
-                    </button>
-                  </div>
+
+            {/* Post Input */}
+            <form onSubmit={handlePostSubmit} className="glass-card rounded-2xl p-4 border border-white/[0.06] bg-primary/5">
+              <textarea 
+                value={newPost}
+                onChange={e => setNewPost(e.target.value)}
+                placeholder={`Share your thoughts on ${country} elections...`}
+                className="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm text-foreground outline-none focus:border-primary/50 resize-none h-20 placeholder:text-muted-foreground/50"
+              />
+              {postError && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 text-xs text-rose-400 flex items-center space-x-1.5 bg-rose-500/10 p-2 rounded-lg">
+                  <ShieldAlert className="w-4 h-4" />
+                  <span>{postError}</span>
                 </motion.div>
-              ))}
+              )}
+              <div className="flex justify-between items-center mt-3">
+                <span className="text-[10px] text-muted-foreground/60 flex items-center"><ShieldAlert className="w-3 h-3 mr-1"/> AI Moderated</span>
+                <button type="submit" disabled={!newPost.trim() || isPosting}
+                  className="bg-primary text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center space-x-1.5 hover:bg-primary/90 disabled:opacity-50 transition-all">
+                  <span>{isPosting ? 'Checking...' : 'Post'}</span>
+                  <Send className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </form>
+
+            {/* Posts List */}
+            <div className="space-y-3">
+              <AnimatePresence>
+                {loadingPosts ? (
+                  <div className="py-8 text-center text-muted-foreground opacity-50 flex flex-col items-center">
+                    <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin mb-2"></div>
+                    <span className="text-xs">Loading live feed...</span>
+                  </div>
+                ) : posts.length === 0 ? (
+                  <div className="py-8 text-center text-muted-foreground border border-dashed border-white/10 rounded-2xl">
+                    <p className="text-sm">No discussions yet in {country}.</p>
+                    <p className="text-xs mt-1 opacity-60">Be the first to share your thoughts!</p>
+                  </div>
+                ) : (
+                  posts.map((post, i) => (
+                    <motion.div key={post.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                      className="glass-card rounded-2xl p-4 border border-white/[0.06] hover:border-white/[0.12] transition-all bg-black/20">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <span className="text-xl">{post.avatar}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-1.5">
+                            <span className="text-sm font-semibold text-foreground">{post.name}</span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/5 border border-white/10">{post.country}</span>
+                          </div>
+                          <span className="text-[10px] text-muted-foreground">
+                            {post.createdAt?.toDate ? new Date(post.createdAt.toDate()).toLocaleDateString() : 'Just now'}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-foreground/90 leading-relaxed mb-3 whitespace-pre-wrap">{post.message}</p>
+                      <div className="flex items-center space-x-3">
+                        <button onClick={() => toggleLike(post.id)}
+                          className={`flex items-center space-x-1 text-xs transition-colors ${likedPosts.has(post.id) ? 'text-rose-400' : 'text-muted-foreground hover:text-rose-400'}`}>
+                          <Heart className={`w-3.5 h-3.5 ${likedPosts.has(post.id) ? 'fill-rose-400' : ''}`} />
+                          <span>{post.likes + (likedPosts.has(post.id) ? 1 : 0)}</span>
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>

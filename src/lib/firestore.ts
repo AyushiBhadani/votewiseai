@@ -34,8 +34,20 @@ export interface DownloadedFile {
   uid?: string;
 }
 
+export interface CommunityPost {
+  id: string;
+  name: string;
+  avatar: string;
+  country: string;
+  message: string;
+  likes: number;
+  createdAt: Timestamp | null;
+  uid?: string;
+}
+
 const CONVERSATIONS = 'conversations';
 const DOWNLOADS = 'downloads';
+const COMMUNITY_POSTS = 'communityPosts';
 
 // Helper — get current anonymous user's UID
 const getUid = (): string | null => auth.currentUser?.uid || null;
@@ -112,4 +124,31 @@ export async function getMyDownloads(): Promise<DownloadedFile[]> {
 
 export async function deleteDownload(id: string): Promise<void> {
   await deleteDoc(doc(db, DOWNLOADS, id));
+}
+
+// ── COMMUNITY POSTS ────────────────────────────────────────
+
+export async function createCommunityPost(
+  name: string,
+  avatar: string,
+  country: string,
+  message: string
+): Promise<void> {
+  await addDoc(collection(db, COMMUNITY_POSTS), {
+    name, avatar, country, message,
+    likes: 0,
+    uid: getUid(),
+    createdAt: serverTimestamp(),
+  });
+}
+
+export async function getCommunityPosts(country: string): Promise<CommunityPost[]> {
+  const q = query(collection(db, COMMUNITY_POSTS), where('country', '==', country));
+  const snap = await getDocs(q);
+  const docs = snap.docs.map(d => ({ id: d.id, ...d.data() })) as CommunityPost[];
+  return docs.sort((a, b) => {
+    const aT = (a.createdAt as any)?.toMillis?.() ?? 0;
+    const bT = (b.createdAt as any)?.toMillis?.() ?? 0;
+    return bT - aT;
+  });
 }

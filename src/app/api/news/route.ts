@@ -53,14 +53,14 @@ Format:
       config: {
         systemInstruction: systemPrompt,
         temperature: 0.2,
-        tools: [{ googleSearch: {} }],
-        responseMimeType: "application/json"
+        tools: [{ googleSearch: {} }]
       },
     });
 
     const text = response.text ?? '[]';
-    // Clean up any potential markdown formatting the AI might still inject despite instructions
-    const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    // Extract JSON array from the response, ignoring surrounding text/citations
+    const jsonMatch = text.match(/\[([\s\S]*?)\]/);
+    const cleanText = jsonMatch ? jsonMatch[0] : '[]';
     
     let news;
     try {
