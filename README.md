@@ -125,14 +125,12 @@ src/
 
 ## 🛡️ Security
 
-- ✅ Anonymous Firebase Auth — no account required, no PII stored
-- ✅ Firestore rules scope data to anonymous UID
-- ✅ API rate limiting (20 req/min/IP)
-- ✅ Input sanitization (HTML strip, 2000-char limit)
-- ✅ Country/language/mode whitelisting
-- ✅ Security headers (X-Frame-Options, X-XSS-Protection, etc.)
-- ✅ GEMINI_API_KEY server-only (never exposed to browser)
+This project implements strict, production-grade security measures:
 
+API Key Management: The highly sensitive Gemini AI API key is strictly isolated in server-side Google Cloud environment variables.
+Firebase Security: The Firebase Web API keys are exposed to the client by design for SDK initialization. However, database integrity is fiercely protected via Firestore Security Rules which only allow authenticated, ephemeral, session-scoped reads/writes.
+DDoS Protection & Rate Limiting: The AI endpoint is hardened with an in-memory IP-based rate limiter (max 20 requests/minute) to prevent abuse and API exhaustion.
+Input Sanitization: All incoming user data is aggressively sanitized and length-capped to prevent XSS and prompt-injection attacks.
 ---
 
 ## 📦 Tech Stack
