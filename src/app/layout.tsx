@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
+
+// Google Analytics 4 Measurement ID
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? '';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,11 +34,11 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "VoteWise AI" }],
   creator: "VoteWise AI",
-  metadataBase: new URL("https://votewise-ai.vercel.app"),
+  metadataBase: new URL("https://votewiseai-543702534688.asia-south1.run.app"),
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://votewise-ai.vercel.app",
+    url: "https://votewiseai-543702534688.asia-south1.run.app",
     title: "VoteWise AI — Your Personal Election Guide",
     description:
       "Understand elections, check voter eligibility, and get AI-powered answers in 16 languages.",
@@ -65,6 +69,23 @@ export default function RootLayout({
         <meta name="theme-color" content="#050b14" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        {/* Google Analytics GA4 — only loads when GA_ID is set */}
+        {GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_ID}', { page_path: window.location.pathname });
+              `}
+            </Script>
+          </>
+        )}
       </head>
       <body className="min-h-full flex flex-col bg-[#050b14]">
         {children}
