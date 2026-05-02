@@ -62,6 +62,7 @@ const LANG_INSTRUCTIONS: Record<string, string> = {
 };
 
 export async function POST(req: NextRequest) {
+  let reqLanguage = 'English';
   try {
     // ── Rate limiting ──────────────────────────────────────────
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'anonymous';
@@ -93,6 +94,8 @@ export async function POST(req: NextRequest) {
       mediaMimeType?: string;
       model?: string;
     };
+    
+    reqLanguage = language || 'English';
     const ALLOWED_MODELS = new Set(['gemini-2.0-flash','gemini-1.5-flash','gemini-2.5-flash-preview-04-17','gemini-2.5-pro-preview-05-06']);
     const activeModel = ALLOWED_MODELS.has(clientModel ?? '') ? clientModel! : 'gemini-2.0-flash';
 
@@ -271,8 +274,18 @@ LANGUAGE: ${langInstruction}`;
     // Check for rate limit / quota errors robustly
     const errString = (String(error) + ' ' + message).toLowerCase();
     if (errString.includes('quota') || errString.includes('429') || errString.includes('rate limit') || errString.includes('exhausted') || errString.includes('too many')) {
+      
+      // HACKATHON DEMO FALLBACK: If the API fails due to rate limits, return a realistic simulated response so the presentation never breaks!
+      const demoResponses: Record<string, string> = {
+        'French': "Le président actuel est Emmanuel Macron. Il a été réélu pour un second mandat en 2022. L'élection présidentielle en France utilise un système à deux tours où le candidat doit obtenir la majorité absolue.",
+        'Hindi': "वर्तमान प्रणाली के तहत, भारत में हर 5 साल में चुनाव होते हैं। आप 18 साल की उम्र से मतदान कर सकते हैं।",
+        'English': "Based on the electoral system in your selected country, citizens vote for their representatives using a democratic process. The legal voting age is typically 18. Let me know if you need specific details about voter registration!",
+      };
+      
+      const fallbackText = demoResponses[reqLanguage] || demoResponses['English'];
+
       return NextResponse.json({ 
-        response: "⚠️ **Google AI Rate Limit Exceeded:**\n\nYou are using the Free Tier of Gemini which allows 15 requests per minute. Please wait **60 seconds** and try again. 🙏", 
+        response: fallbackText + "\n\n*(Note: This is a simulated response to bypass the Google API rate limit during your demo!)*", 
         imagePrompt: null, 
         registrationUrl: null, 
         intent: "general" 
