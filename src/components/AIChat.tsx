@@ -246,7 +246,7 @@ export default function AIChat() {
             <div className="flex items-center space-x-1 mt-0.5">
               <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
               <span className="text-[10px] text-emerald-400 font-medium">
-                {mode === 'story' ? 'Stories for everyone · ' : 'Gemini 2.5 Flash · '}
+                {mode === 'story' ? 'Stories for everyone · ' : `${geminiModel} · `}
                 {language}
               </span>
             </div>
