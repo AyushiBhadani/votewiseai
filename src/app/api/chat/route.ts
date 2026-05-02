@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GoogleGenAI } from '@google/genai';
 import {
   detectIntent,
   INTENT_SUB_PROMPTS,
@@ -11,6 +10,7 @@ import {
   buildGeminiHistory,
   type ChatMessage,
 } from '@/lib/aiUtils';
+import { getGeminiService } from '@/lib/geminiService';
 
 // ── Simple in-memory rate limiter (resets on server restart / cold start) ──
 const rateLimitMap = new Map<string, { count: number; reset: number }>();
@@ -99,15 +99,6 @@ export async function POST(req: NextRequest) {
     const ALLOWED_MODELS = new Set(['gemini-2.0-flash','gemini-1.5-flash','gemini-2.5-flash','gemini-2.5-pro-preview-05-06', 'gemini-flash-latest']);
     const activeModel = ALLOWED_MODELS.has(clientModel ?? '') ? clientModel! : 'gemini-2.5-flash';
 
-    // ── API key ────────────────────────────────────────────────
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json(
-        { error: 'SERVER_CONFIG_ERROR: GEMINI_API_KEY is missing in Cloud Run environment variables.' },
-        { status: 500 }
-      );
-    }
-
     if (!message || typeof message !== 'string') {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
@@ -121,6 +112,15 @@ export async function POST(req: NextRequest) {
     const sanitizedMessage = message.replace(/<[^>]*>/g, '').replace(/[{}[\]`\\]/g, '').trim();
     if (!sanitizedMessage) {
       return NextResponse.json({ error: 'Message cannot be empty' }, { status: 400 });
+    }
+
+    // ── API key ────────────────────────────────────────────────
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'SERVER_CONFIG_ERROR: GEMINI_API_KEY is missing in Cloud Run environment variables.' },
+        { status: 500 }
+      );
     }
 
     // Whitelist country, language, mode
@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const ai = new GoogleGenAI({ apiKey });
+    const gemini = getGeminiService(apiKey, activeModel);
     const langInstruction = LANG_INSTRUCTIONS[safeLanguage] ?? 'Reply in English.';
 
     // ── System prompt (smarter, human-like, structured) ────────
@@ -191,46 +191,12 @@ LANGUAGE: ${langInstruction}`;
       10
     );
 
-    // ── Generate main response ─────────────────────────────────
-    let responseText: string;
-
-    if (conversationHistory.length > 0) {
-      // Multi-turn: use chat with history for context-aware responses
-      const chat = ai.chats.create({
-        model: activeModel,
-        config: {
-          systemInstruction: systemPrompt,
-          temperature: safeMode === 'story' ? 0.85 : 0.45,
-          tools: [{ googleSearch: {} }],
-        },
-        history: conversationHistory,
-      });
-      const chatResponse = await chat.sendMessage({ message: sanitizedMessage });
-      responseText = (chatResponse.text ?? '').trim();
-    } else {
-      // Single-turn: standard generate for first message
-      // Build contents array supporting text + optional media
-      const contentParts: any[] = [{ text: sanitizedMessage }];
-      if (mediaBase64 && mediaMimeType) {
-        contentParts.push({
-          inlineData: {
-            data: mediaBase64,
-            mimeType: mediaMimeType
-          }
-        });
-      }
-
-      const response = await ai.models.generateContent({
-        model: activeModel,
-        contents: contentParts,
-        config: { 
-          systemInstruction: systemPrompt, 
-          temperature: safeMode === 'story' ? 0.85 : 0.45,
-          tools: [{ googleSearch: {} }], 
-        },
-      });
-      responseText = (response.text ?? '').trim();
-    }
+    // ── Generate response using Service ────────────────────────
+    responseText = await gemini.generateResponse(
+      sanitizedMessage,
+      conversationHistory as any, // Cast to compatible Content type
+      systemPrompt
+    );
 
     if (!responseText) {
       return NextResponse.json({ error: 'Empty response from AI' }, { status: 502 });

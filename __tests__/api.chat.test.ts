@@ -5,16 +5,16 @@
  * Tests input sanitization, rate limiting, and response structure.
  */
 
-// Mock the Gemini SDK before any imports
-jest.mock('@google/genai', () => ({
-  GoogleGenAI: jest.fn().mockImplementation(() => ({
-    models: {
-      generateContent: jest.fn().mockResolvedValue({
-        text: 'In India, elections are conducted by the Election Commission of India.',
-      }),
-    },
+// Mock the Gemini Service before any imports
+jest.mock('@/lib/geminiService', () => ({
+  getGeminiService: jest.fn().mockImplementation(() => ({
+    generateResponse: jest.fn().mockResolvedValue('In India, elections are conducted by the Election Commission of India.'),
+    generateQuickAnswer: jest.fn().mockResolvedValue('Mocked response'),
   })),
 }));
+
+// Mock the environment variable for testing
+process.env.GEMINI_API_KEY = 'test-api-key';
 
 import { NextRequest } from 'next/server';
 

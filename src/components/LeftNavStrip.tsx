@@ -36,6 +36,7 @@ export default function LeftNavStrip() {
               : 'text-muted-foreground hover:text-foreground hover:bg-white/[0.06]'
           }`}
           title={label}
+          aria-label={label}
         >
           {isActive && (
             <motion.div

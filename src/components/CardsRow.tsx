@@ -5,6 +5,10 @@ import Modal from '@/components/Modal';
 import { useAppStore } from '@/store/useAppStore';
 import { RefreshCw, Laugh, BookOpen, Vote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { EVMSimulation } from './simulations/EVMSimulation';
+import { PreferentialSimulation } from './simulations/PreferentialSimulation';
+import { FranceSimulation } from './simulations/FranceSimulation';
+import { PaperBallotSimulation } from './simulations/PaperBallotSimulation';
 
 // ─── MEMES ────────────────────────────────────────────────
 const MEMES = [
@@ -197,36 +201,47 @@ export default function CardsRow() {
       </Modal>
 
       {/* ── SIMULATION MODAL ── */}
-      <Modal isOpen={activeModal === 'simulation'} onClose={closeModal} title="🗳️ Ballot Simulation">
+      <Modal isOpen={activeModal === 'simulation'} onClose={closeModal} title={`🗳️ ${country} Ballot Simulation`}>
         <div className="space-y-4">
           {!simSubmitted ? (
-            <>
-              <p className="text-sm text-muted-foreground">Practice filling out a ballot. This is just a simulation — no real vote is recorded.</p>
-              <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-5 space-y-3">
-                <h4 className="font-bold text-foreground border-b border-white/[0.08] pb-2 text-sm">Select Your Candidate</h4>
-                {[
-                  { name: "Candidate A", party: "Progressive Alliance" },
-                  { name: "Candidate B", party: "Conservative Front" },
-                  { name: "Candidate C", party: "Independent" },
-                ].map(c => (
-                  <label key={c.name} className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-all border ${simVote === c.name ? 'bg-primary/10 border-primary/30' : 'bg-white/[0.02] border-white/[0.06] hover:border-white/20'}`}>
-                    <input type="radio" name="candidate" value={c.name} checked={simVote === c.name}
-                      onChange={() => setSimVote(c.name)} className="w-4 h-4 accent-primary" />
-                    <div>
-                      <span className="font-medium text-sm text-foreground block">{c.name}</span>
-                      <span className="text-xs text-muted-foreground">{c.party}</span>
-                    </div>
-                  </label>
-                ))}
-              </div>
-              <button
-                onClick={() => simVote && setSimSubmitted(true)}
-                disabled={!simVote}
-                className="w-full bg-gradient-to-r from-primary to-violet-500 text-white py-3 rounded-xl font-semibold shadow-lg hover:shadow-primary/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                Cast Mock Vote 🗳️
-              </button>
-            </>
+            <div className="py-2" key={country}>
+              {country === 'India' && <EVMSimulation onVoteCast={(v) => { setSimVote(v); setSimSubmitted(true); }} />}
+              {country === 'Australia' && <PreferentialSimulation onVoteCast={(v) => { setSimVote(v); setSimSubmitted(true); }} />}
+              {country === 'France' && <FranceSimulation onVoteCast={(v) => { setSimVote(v); setSimSubmitted(true); }} />}
+              {['USA', 'UK', 'Canada', 'Pakistan'].includes(country) && (
+                <PaperBallotSimulation country={country} onVoteCast={(v) => { setSimVote(v); setSimSubmitted(true); }} />
+              )}
+              {/* Default fallback for other countries */}
+              {!['India', 'Australia', 'France', 'USA', 'UK', 'Canada', 'Pakistan'].includes(country) && (
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">Practice filling out a standard ballot for {country}.</p>
+                  <div className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-5 space-y-3">
+                    <h4 className="font-bold text-foreground border-b border-white/[0.08] pb-2 text-sm">Official Ballot</h4>
+                    {[
+                      { name: "Candidate A", party: "Alliance" },
+                      { name: "Candidate B", party: "Front" },
+                      { name: "Candidate C", party: "Independent" },
+                    ].map(c => (
+                      <label key={c.name} className={`flex items-center space-x-3 p-3 rounded-xl cursor-pointer transition-all border ${simVote === c.name ? 'bg-primary/10 border-primary/30' : 'bg-white/[0.02] border-white/[0.06] hover:border-white/20'}`}>
+                        <input type="radio" name="candidate" value={c.name} checked={simVote === c.name}
+                          onChange={() => setSimVote(c.name)} className="w-4 h-4 accent-primary" />
+                        <div>
+                          <span className="font-medium text-sm text-foreground block">{c.name}</span>
+                          <span className="text-xs text-muted-foreground">{c.party}</span>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => simVote && setSimSubmitted(true)}
+                    disabled={!simVote}
+                    className="w-full bg-gradient-to-r from-primary to-violet-500 text-white py-3 rounded-xl font-semibold shadow-lg hover:shadow-primary/30 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    Cast Mock Vote 🗳️
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
               className="flex flex-col items-center text-center space-y-4 py-6">
