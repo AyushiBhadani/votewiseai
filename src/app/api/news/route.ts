@@ -9,7 +9,7 @@ export async function GET(req: Request) {
 
     // Same fallback logic as chat API
     let ai: any;
-    let modelName = 'gemini-2.5-flash';
+    let modelName = 'gemini-2.0-flash';
 
     if (process.env.GEMINI_API_KEY) {
       ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });

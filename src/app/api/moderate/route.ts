@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     }
 
     let ai: any;
-    let modelName = 'gemini-2.5-flash';
+    let modelName = 'gemini-2.0-flash';
 
     if (process.env.GEMINI_API_KEY) {
       ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
