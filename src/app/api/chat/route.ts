@@ -261,13 +261,13 @@ LANGUAGE: ${langInstruction}`;
       }
     );
 
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Internal Server Error';
+  } catch (error: any) {
+    const message = error?.message || String(error) || 'Internal Server Error';
     console.error('[/api/chat] Error:', message);
     
-    // Check for rate limit / quota errors
-    const errMsg = message.toLowerCase();
-    if (errMsg.includes('quota') || errMsg.includes('429') || errMsg.includes('rate limit')) {
+    // Check for rate limit / quota errors robustly
+    const errString = (String(error) + ' ' + message).toLowerCase();
+    if (errString.includes('quota') || errString.includes('429') || errString.includes('rate limit') || errString.includes('exhausted') || errString.includes('too many')) {
       return NextResponse.json({ 
         response: "⚠️ **Google AI Rate Limit Exceeded:**\n\nYou are using the Free Tier of Gemini which allows 15 requests per minute. You have been testing very fast! Please wait **60 seconds** and ask your question again. 🙏", 
         imagePrompt: null, 

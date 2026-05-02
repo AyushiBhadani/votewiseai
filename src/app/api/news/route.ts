@@ -74,8 +74,10 @@ Format:
 
   } catch (error: any) {
     console.error('News API error:', error);
-    const errMsg = error?.message?.toLowerCase() || '';
-    if (errMsg.includes('quota') || errMsg.includes('429') || errMsg.includes('rate limit')) {
+    const message = error?.message || String(error) || '';
+    const errString = (String(error) + ' ' + message).toLowerCase();
+    
+    if (errString.includes('quota') || errString.includes('429') || errString.includes('rate limit') || errString.includes('exhausted') || errString.includes('too many')) {
       return NextResponse.json([{ 
         id: "error-rate-limit", 
         date: new Date().toISOString().split('T')[0], 

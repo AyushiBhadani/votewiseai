@@ -74,9 +74,11 @@ Do NOT use markdown \`\`\`json. Return RAW JSON only.`;
   } catch (error: any) {
     console.error('Moderation API error:', error);
     
-    // Check for rate limit / quota errors
-    const errMsg = error?.message?.toLowerCase() || '';
-    if (errMsg.includes('quota') || errMsg.includes('429') || errMsg.includes('rate limit')) {
+    // Check for rate limit / quota errors robustly
+    const message = error?.message || String(error) || '';
+    const errString = (String(error) + ' ' + message).toLowerCase();
+    
+    if (errString.includes('quota') || errString.includes('429') || errString.includes('rate limit') || errString.includes('exhausted') || errString.includes('too many')) {
       return NextResponse.json({ safe: false, reason: "Google AI Rate Limit Exceeded: Please wait a minute and try again." });
     }
 
