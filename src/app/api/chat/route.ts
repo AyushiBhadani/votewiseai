@@ -75,8 +75,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
-    // Sanitize: strip HTML, limit length
-    const sanitizedMessage = message.replace(/<[^>]*>/g, '').trim().slice(0, 2000);
+    // Reject messages over the 2000 char limit (security hardening)
+    if (message.length > 2000) {
+      return NextResponse.json({ error: 'Message too long. Maximum 2000 characters.' }, { status: 400 });
+    }
+
+    // Sanitize: strip HTML tags and dangerous characters
+    const sanitizedMessage = message.replace(/<[^>]*>/g, '').trim();
     if (!sanitizedMessage) {
       return NextResponse.json({ error: 'Message cannot be empty' }, { status: 400 });
     }
