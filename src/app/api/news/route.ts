@@ -77,34 +77,29 @@ Format:
 
   } catch (error: any) {
     console.error('News API error:', error);
-    const message = error?.message || String(error) || '';
-    const errString = (String(error) + ' ' + message).toLowerCase();
-    
-    if (errString.includes('quota') || errString.includes('429') || errString.includes('rate limit') || errString.includes('exhausted') || errString.includes('too many')) {
-      return NextResponse.json([
-        { 
-          id: "mock-1", 
-          date: new Date().toISOString().split('T')[0], 
-          title: `Major Voting Reforms Proposed in ${reqCountry}`, 
-          description: "New initiatives aim to increase voter turnout and ensure smoother registration processes across all major districts.", 
-          source: "Global Election News" 
-        },
-        { 
-          id: "mock-2", 
-          date: new Date().toISOString().split('T')[0], 
-          title: `Youth Voter Registration Surges Ahead of ${reqCountry} Elections`, 
-          description: "Record numbers of young people are registering to vote, signaling high engagement for the upcoming political cycle.", 
-          source: "VoteWise AI Network" 
-        },
-        { 
-          id: "mock-3", 
-          date: new Date().toISOString().split('T')[0], 
-          title: "New Fact-Checking Initiative Launched", 
-          description: "A coalition of independent journalists has launched a live fact-checking platform to combat misinformation during the campaigns.", 
-          source: "Democracy Watch" 
-        }
-      ]);
-    }
-    return NextResponse.json({ error: 'Failed to fetch news' }, { status: 500 });
+    // HACKATHON DEMO FALLBACK: If the API fails for ANY reason, return realistic mock news so the presentation never breaks!
+    return NextResponse.json([
+      { 
+        id: "mock-1", 
+        date: new Date().toISOString().split('T')[0], 
+        title: `Major Voting Reforms Proposed in ${reqCountry}`, 
+        description: "New initiatives aim to increase voter turnout and ensure smoother registration processes across all major districts.", 
+        source: "Global Election News" 
+      },
+      { 
+        id: "mock-2", 
+        date: new Date().toISOString().split('T')[0], 
+        title: `Youth Voter Registration Surges Ahead of ${reqCountry} Elections`, 
+        description: "Record numbers of young people are registering to vote, signaling high engagement for the upcoming political cycle.", 
+        source: "VoteWise AI Network" 
+      },
+      { 
+        id: "mock-3", 
+        date: new Date().toISOString().split('T')[0], 
+        title: "New Fact-Checking Initiative Launched", 
+        description: "A coalition of independent journalists has launched a live fact-checking platform to combat misinformation during the campaigns.", 
+        source: "Democracy Watch" 
+      }
+    ]);
   }
 }

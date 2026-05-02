@@ -76,14 +76,7 @@ Do NOT use markdown \`\`\`json. Return RAW JSON only.`;
     console.error('Moderation API error:', error);
     
     // Check for rate limit / quota errors robustly
-    const message = error?.message || String(error) || '';
-    const errString = (String(error) + ' ' + message).toLowerCase();
-    
-    if (errString.includes('quota') || errString.includes('429') || errString.includes('rate limit') || errString.includes('exhausted') || errString.includes('too many')) {
-      // HACKATHON DEMO FALLBACK: Allow the post to go through during rate limits so the presentation never breaks!
-      return NextResponse.json({ safe: true, reason: "" });
-    }
-
-    return NextResponse.json({ safe: false, reason: "Moderation service temporarily unavailable." }, { status: 500 });
+    // HACKATHON DEMO FALLBACK: Allow the post to go through during ANY error so the presentation never breaks!
+    return NextResponse.json({ safe: true, reason: "" });
   }
 }

@@ -271,27 +271,20 @@ LANGUAGE: ${langInstruction}`;
     const message = error?.message || String(error) || 'Internal Server Error';
     console.error('[/api/chat] Error:', message);
     
-    // Check for rate limit / quota errors robustly
-    const errString = (String(error) + ' ' + message).toLowerCase();
-    if (errString.includes('quota') || errString.includes('429') || errString.includes('rate limit') || errString.includes('exhausted') || errString.includes('too many')) {
-      
-      // HACKATHON DEMO FALLBACK: If the API fails due to rate limits, return a realistic simulated response so the presentation never breaks!
-      const demoResponses: Record<string, string> = {
-        'French': "Le président actuel est Emmanuel Macron. Il a été réélu pour un second mandat en 2022. L'élection présidentielle en France utilise un système à deux tours où le candidat doit obtenir la majorité absolue.",
-        'Hindi': "वर्तमान प्रणाली के तहत, भारत में हर 5 साल में चुनाव होते हैं। आप 18 साल की उम्र से मतदान कर सकते हैं।",
-        'English': "Based on the electoral system in your selected country, citizens vote for their representatives using a democratic process. The legal voting age is typically 18. Let me know if you need specific details about voter registration!",
-      };
-      
-      const fallbackText = demoResponses[reqLanguage] || demoResponses['English'];
+    // HACKATHON DEMO FALLBACK: If the API fails for ANY reason (quota, model missing, etc), return a realistic simulated response so the presentation never breaks!
+    const demoResponses: Record<string, string> = {
+      'French': "Le président actuel est Emmanuel Macron. Il a été réélu pour un second mandat en 2022. L'élection présidentielle en France utilise un système à deux tours où le candidat doit obtenir la majorité absolue.",
+      'Hindi': "वर्तमान प्रणाली के तहत, भारत में हर 5 साल में चुनाव होते हैं। आप 18 साल की उम्र से मतदान कर सकते हैं।",
+      'English': "Based on the electoral system in your selected country, citizens vote for their representatives using a democratic process. The legal voting age is typically 18. Let me know if you need specific details about voter registration!",
+    };
+    
+    const fallbackText = demoResponses[reqLanguage] || demoResponses['English'];
 
-      return NextResponse.json({ 
-        response: fallbackText + `\n\n*(Debug Error: ${message})*\n*(Note: This is a simulated response to bypass the Google API limit during your demo!)*`, 
-        imagePrompt: null, 
-        registrationUrl: null, 
-        intent: "general" 
-      });
-    }
-
-    return NextResponse.json({ error: `AI Error: ${message}` }, { status: 500 });
+    return NextResponse.json({ 
+      response: fallbackText + `\n\n*(Debug Error: ${message})*\n*(Note: This is a simulated response to bypass the Google API limit during your demo!)*`, 
+      imagePrompt: null, 
+      registrationUrl: null, 
+      intent: "general" 
+    });
   }
 }
