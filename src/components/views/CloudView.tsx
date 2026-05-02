@@ -4,12 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Cloud, FileText, Trash2, Download, RefreshCw,
-  HardDrive, ShieldCheck, Info, CloudOff
+  HardDrive, ShieldCheck, Info, CloudOff, MapPin
 } from 'lucide-react';
 import { getMyDownloads, deleteDownload, DownloadedFile } from '@/lib/firestore';
 import { auth } from '@/lib/firebase';
+import { useAppStore } from '@/store/useAppStore';
 
 export default function CloudView() {
+  const { country } = useAppStore();
   const [downloads, setDownloads] = useState<DownloadedFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [uid, setUid] = useState<string | null>(null);
@@ -190,6 +192,26 @@ export default function CloudView() {
               </AnimatePresence>
             </div>
           )}
+        </div>
+
+        {/* Google Maps Embed (Google Services Integration) */}
+        <div className="mt-6 glass-card rounded-2xl overflow-hidden border border-white/[0.06]">
+          <div className="flex items-center px-5 py-4 border-b border-white/[0.06] bg-white/[0.01]">
+            <MapPin className="w-4 h-4 text-emerald-400 mr-2" />
+            <h3 className="font-semibold text-foreground text-sm">Election Authority Locator</h3>
+          </div>
+          <div className="p-1">
+            <iframe
+              title={`Election Commission ${country}`}
+              width="100%"
+              height="250"
+              style={{ border: 0, borderRadius: '0.75rem' }}
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(`Election Commission of ${country}`)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+            />
+          </div>
         </div>
 
         {/* Footer note */}

@@ -10,6 +10,8 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
   imageUrl?: string; // story mode illustration
+  intent?: string;
+  registrationUrl?: { url: string; label: string } | null;
 }
 
 export interface Conversation {

@@ -3,11 +3,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Send, Mic, MicOff, Sparkles, BookOpen, Volume2, VolumeX,
-  Plus, User, Bot, BookMarked, Zap, Languages
+  Plus, User, Bot, BookMarked, Zap, Languages, Compass, ExternalLink
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/store/useAppStore';
 import { createConversation, updateConversation, Message } from '@/lib/firestore';
+import GuideMe from './GuideMe';
 
 // Language → browser speech code
 const LANG_CODES: Record<string, string> = {
@@ -57,6 +58,7 @@ export default function AIChat() {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [mode, setMode] = useState<'chat' | 'story'>('chat');
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -101,7 +103,7 @@ export default function AIChat() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, country, language, mode }),
+        body: JSON.stringify({ message: text, country, language, mode, history: messages }),
       });
       const data = await res.json();
       const responseText = data.response || `Error: ${data.error}`;
@@ -119,6 +121,8 @@ export default function AIChat() {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: responseText,
+        intent: data.intent,
+        registrationUrl: data.registrationUrl,
         ...(imageUrl ? { imageUrl } : {})
       };
       const final = [...updated, assistantMsg];
@@ -231,6 +235,14 @@ export default function AIChat() {
               <span>Story Mode</span>
             </button>
           </div>
+
+          <button
+            onClick={() => setIsGuideOpen(true)}
+            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500 text-white shadow-sm hover:bg-emerald-600 transition-all border border-transparent"
+          >
+            <Compass className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Guide Me</span>
+          </button>
 
           <button
             onClick={handleExplainSimply}
@@ -398,6 +410,17 @@ export default function AIChat() {
                     }`}>
                       {msg.content}
                     </div>
+                    {/* Action Buttons (Registration) */}
+                    {msg.role === 'assistant' && msg.registrationUrl && (
+                      <div className="mt-2 w-full">
+                        <a href={msg.registrationUrl.url} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center justify-center space-x-2 w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-2.5 rounded-xl text-xs font-bold hover:shadow-lg hover:shadow-emerald-500/20 transition-all"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                          <span>{msg.registrationUrl.label}</span>
+                        </a>
+                      </div>
+                    )}
                     {/* Story illustration */}
                     {msg.role === 'assistant' && msg.imageUrl && (
                       <motion.div
@@ -495,6 +518,8 @@ export default function AIChat() {
           VoteWise AI speaks 16 languages · {mode === 'story' ? '📖 Story Mode active' : 'Educational purposes only'} · Verify with official sources
         </p>
       </div>
+
+      <GuideMe isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
     </div>
   );
 }

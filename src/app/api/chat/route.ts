@@ -1,5 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
+import {
+  detectIntent,
+  INTENT_SUB_PROMPTS,
+  getRegistrationUrl,
+  buildCacheKey,
+  getCachedResponse,
+  setCachedResponse,
+  pruneCache,
+  buildGeminiHistory,
+  type ChatMessage,
+} from '@/lib/aiUtils';
 
 // ── Simple in-memory rate limiter (resets on server restart / cold start) ──
 const rateLimitMap = new Map<string, { count: number; reset: number }>();
@@ -61,6 +72,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Prune stale cache entries periodically (low-cost housekeeping)
+    pruneCache();
+
     // ── Parse & validate body ──────────────────────────────────
     let body: Record<string, unknown>;
     try {
@@ -69,7 +83,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
 
-    const { message, country, language, mode } = body as Record<string, string>;
+    const { message, country, language, mode, history } = body as {
+      message: string;
+      country: string;
+      language: string;
+      mode: string;
+      history?: ChatMessage[];
+    };
 
     if (!message || typeof message !== 'string') {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
@@ -81,7 +101,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Sanitize: strip HTML tags and dangerous characters
-    const sanitizedMessage = message.replace(/<[^>]*>/g, '').trim();
+    const sanitizedMessage = message.replace(/<[^>]*>/g, '').replace(/[{}[\]`\\]/g, '').trim();
     if (!sanitizedMessage) {
       return NextResponse.json({ error: 'Message cannot be empty' }, { status: 400 });
     }
@@ -90,6 +110,29 @@ export async function POST(req: NextRequest) {
     const safeCountry  = ALLOWED_COUNTRIES.has(country)  ? country  : 'India';
     const safeLanguage = ALLOWED_LANGUAGES.has(language) ? language : 'English';
     const safeMode     = ALLOWED_MODES.has(mode)         ? mode     : 'chat';
+
+    // ── Intent detection ───────────────────────────────────────
+    const intent = detectIntent(sanitizedMessage);
+    const intentSubPrompt = INTENT_SUB_PROMPTS[intent];
+
+    // ── Registration link (returned in response for relevant intents) ──
+    const registrationInfo = (intent === 'registration' || intent === 'eligibility')
+      ? getRegistrationUrl(safeCountry)
+      : null;
+
+    // ── Cache check (skip for story mode & conversation with history) ──
+    const useCache = safeMode === 'chat' && (!history || history.length === 0);
+    const cacheKey = buildCacheKey(sanitizedMessage, safeCountry, safeLanguage, safeMode);
+
+    if (useCache) {
+      const cached = getCachedResponse(cacheKey);
+      if (cached) {
+        return NextResponse.json(
+          { response: cached, registrationUrl: registrationInfo, cached: true },
+          { headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } }
+        );
+      }
+    }
 
     // ── API key ────────────────────────────────────────────────
     const apiKey = process.env.GEMINI_API_KEY;
@@ -103,35 +146,74 @@ export async function POST(req: NextRequest) {
     const ai = new GoogleGenAI({ apiKey });
     const langInstruction = LANG_INSTRUCTIONS[safeLanguage] ?? 'Reply in English.';
 
-    // ── System prompt ──────────────────────────────────────────
+    // ── System prompt (smarter, human-like, structured) ────────
     const systemPrompt = safeMode === 'story'
-      ? `You are VoteWise Storyteller, explaining elections through simple, engaging stories for children and first-time voters.
-Rules:
-- Always use relatable characters (Raju the farmer, Priya the student, a village council)
+      ? `You are VoteWise Storyteller — a warm, friendly guide who explains elections through engaging stories.
+RULES:
+- Use relatable characters (Raju the farmer, Priya the student, a village council)
 - Use 5–8 emojis per response 🎉🗳️👑🌟
-- Keep stories under 200 words
-- Relate to elections in ${safeCountry}
-- End with 1 bold key takeaway
-- ${langInstruction}`
-      : `You are VoteWise AI, a neutral election expert for ${safeCountry}.
-Rules:
-- Use 4–6 emojis naturally 🗳️✅📋🌍
-- Be factual, concise, and bias-free
+- Keep stories under 250 words
+- Relate the story specifically to elections in ${safeCountry}
+- End with a bold key takeaway (**Key Takeaway:** ...)
+- ${langInstruction}
+- ${intentSubPrompt}`
+      : `You are VoteWise AI — a friendly, knowledgeable, and neutral election expert for ${safeCountry}.
+PERSONALITY: Warm, encouraging, and clear. Like a helpful friend who knows elections deeply.
+FORMATTING RULES:
+- Always start with a direct answer to the question in 1–2 sentences
+- Use numbered steps (1. 2. 3.) for processes
+- Use bullet points (•) for lists of facts
+- Use 3–5 emojis naturally placed throughout 🗳️✅📋🌍
+- Bold key terms using **term** markdown
+- End longer answers with a "💡 Quick Tip:" line
+- Keep answers under 300 words unless the question requires more detail
+CONTENT RULES:
+- Be factual, concise, and completely bias-free
 - Never recommend candidates or parties
-- Use bullet points and numbered steps where helpful
-- Cite official sources when relevant
-- ${langInstruction}`;
+- Cite official sources or authorities when relevant (e.g., "According to the Election Commission of India...")
+- Handle greetings warmly and offer to help with specific topics
+CONTEXT: User is asking about elections in ${safeCountry} in ${safeLanguage}.
+INTENT GUIDANCE: ${intentSubPrompt}
+LANGUAGE: ${langInstruction}`;
+
+    // ── Build multi-turn conversation history ──────────────────
+    const conversationHistory = buildGeminiHistory(
+      (history ?? []).filter(m => m.role === 'user' || m.role === 'assistant'),
+      10
+    );
 
     // ── Generate main response ─────────────────────────────────
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: sanitizedMessage,
-      config: { systemInstruction: systemPrompt, temperature: safeMode === 'story' ? 0.85 : 0.5 },
-    });
+    let responseText: string;
 
-    const responseText = (response.text ?? '').trim();
+    if (conversationHistory.length > 0) {
+      // Multi-turn: use chat with history for context-aware responses
+      const chat = ai.chats.create({
+        model: 'gemini-2.5-flash',
+        config: {
+          systemInstruction: systemPrompt,
+          temperature: safeMode === 'story' ? 0.85 : 0.45,
+        },
+        history: conversationHistory,
+      });
+      const chatResponse = await chat.sendMessage({ message: sanitizedMessage });
+      responseText = (chatResponse.text ?? '').trim();
+    } else {
+      // Single-turn: standard generate for first message
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: sanitizedMessage,
+        config: { systemInstruction: systemPrompt, temperature: safeMode === 'story' ? 0.85 : 0.45 },
+      });
+      responseText = (response.text ?? '').trim();
+    }
+
     if (!responseText) {
       return NextResponse.json({ error: 'Empty response from AI' }, { status: 502 });
+    }
+
+    // ── Cache the response (single-turn, chat mode only) ───────
+    if (useCache) {
+      setCachedResponse(cacheKey, responseText);
     }
 
     // ── Generate image prompt for story mode ───────────────────
@@ -151,7 +233,7 @@ Rules:
     }
 
     return NextResponse.json(
-      { response: responseText, imagePrompt },
+      { response: responseText, imagePrompt, registrationUrl: registrationInfo, intent },
       {
         headers: {
           'Cache-Control': 'no-store',
