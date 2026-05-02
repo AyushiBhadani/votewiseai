@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware';
 interface AppState {
   country: string;
   language: string;
+  geminiModel: string;
   isAudioEnabled: boolean;
   activeNavTab: string;
   activeConversationId: string | null;
@@ -12,6 +13,7 @@ interface AppState {
   isMobileMenuOpen: boolean;
   setCountry: (country: string) => void;
   setLanguage: (lang: string) => void;
+  setGeminiModel: (model: string) => void;
   toggleAudio: () => void;
   setActiveNavTab: (tab: string) => void;
   setActiveConversationId: (id: string | null) => void;
@@ -25,6 +27,7 @@ export const useAppStore = create<AppState>()(
     (set) => ({
       country: 'India',
       language: 'English',
+      geminiModel: 'gemini-2.0-flash',
       isAudioEnabled: false,
       activeNavTab: 'home',
       activeConversationId: null,
@@ -33,6 +36,7 @@ export const useAppStore = create<AppState>()(
       isMobileMenuOpen: false,
       setCountry: (country) => set({ country }),
       setLanguage: (language) => set({ language }),
+      setGeminiModel: (geminiModel) => set({ geminiModel }),
       toggleAudio: () => set((state) => ({ isAudioEnabled: !state.isAudioEnabled })),
       setActiveNavTab: (activeNavTab) => set({ activeNavTab }),
       setActiveConversationId: (activeConversationId) => set({ activeConversationId }),
@@ -46,10 +50,11 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'votewise-storage',
-      skipHydration: true, // prevents SSR/client hydration mismatch in Next.js
+      skipHydration: true,
       partialize: (state) => ({
         country: state.country,
         language: state.language,
+        geminiModel: state.geminiModel,
         isAudioEnabled: state.isAudioEnabled,
         reminders: state.reminders,
       }),

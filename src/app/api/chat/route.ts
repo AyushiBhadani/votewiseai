@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
 
-    const { message, country, language, mode, history, mediaBase64, mediaMimeType } = body as {
+    const { message, country, language, mode, history, mediaBase64, mediaMimeType, model: clientModel } = body as {
       message: string;
       country: string;
       language: string;
@@ -91,7 +91,10 @@ export async function POST(req: NextRequest) {
       history?: ChatMessage[];
       mediaBase64?: string;
       mediaMimeType?: string;
+      model?: string;
     };
+    const ALLOWED_MODELS = new Set(['gemini-2.0-flash','gemini-1.5-flash-8b','gemini-2.5-flash','gemini-2.5-pro']);
+    const activeModel = ALLOWED_MODELS.has(clientModel ?? '') ? clientModel! : 'gemini-2.0-flash';
 
     // ── API key ────────────────────────────────────────────────
     const apiKey = process.env.GEMINI_API_KEY;
@@ -191,7 +194,7 @@ LANGUAGE: ${langInstruction}`;
     if (conversationHistory.length > 0) {
       // Multi-turn: use chat with history for context-aware responses
       const chat = ai.chats.create({
-        model: 'gemini-2.0-flash',
+        model: activeModel,
         config: {
           systemInstruction: systemPrompt,
           temperature: safeMode === 'story' ? 0.85 : 0.45,
@@ -215,7 +218,7 @@ LANGUAGE: ${langInstruction}`;
       }
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: activeModel,
         contents: contentParts,
         config: { 
           systemInstruction: systemPrompt, 
@@ -240,7 +243,7 @@ LANGUAGE: ${langInstruction}`;
     if (safeMode === 'story') {
       try {
         const imgRes = await ai.models.generateContent({
-          model: 'gemini-2.0-flash',
+          model: activeModel,
           contents: `Write a SHORT image prompt (max 15 words, no faces, safe for all ages, flat colorful illustration) for this election story: "${responseText.slice(0, 300)}"`,
           config: { temperature: 0.6 },
         });

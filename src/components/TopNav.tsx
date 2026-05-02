@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Globe, Mic, MicOff, Bell, Download, CheckCircle2, Zap } from 'lucide-react';
+import { Globe, Mic, MicOff, Bell, Download, CheckCircle2, Zap, Cpu } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { saveDownload } from '@/lib/firestore';
@@ -41,8 +41,15 @@ const LANGUAGES = [
   { value: 'Chinese',    label: '中文' },
 ];
 
+const MODELS = [
+  { value: 'gemini-2.0-flash',    label: '2.0 Flash',    quota: '1,500/day ✅' },
+  { value: 'gemini-1.5-flash-8b', label: '1.5 Flash 8B', quota: '1,500/day ✅' },
+  { value: 'gemini-2.5-flash',    label: '2.5 Flash',    quota: '20/day ⚠️' },
+  { value: 'gemini-2.5-pro',      label: '2.5 Pro',      quota: '100/day 🔥' },
+];
+
 export default function TopNav() {
-  const { country, setCountry, language, setLanguage, isAudioEnabled, toggleAudio, reminders } = useAppStore();
+  const { country, setCountry, language, setLanguage, geminiModel, setGeminiModel, isAudioEnabled, toggleAudio, reminders } = useAppStore();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
@@ -158,6 +165,27 @@ export default function TopNav() {
               ))}
             </select>
             <div className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">▾</div>
+          </div>
+
+          {/* Model Selector */}
+          <div className="relative hidden md:block">
+            <div className="flex items-center space-x-1.5 appearance-none bg-white/[0.04] border border-white/[0.08] hover:border-primary/40 rounded-xl pl-2.5 pr-8 py-2 text-sm font-medium transition-all cursor-pointer text-foreground backdrop-blur-sm">
+              <Cpu className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+              <select
+                className="bg-transparent outline-none cursor-pointer text-foreground text-xs w-24"
+                value={geminiModel}
+                onChange={(e) => {
+                  setGeminiModel(e.target.value);
+                }}
+                title="Switch AI Model"
+              >
+                {MODELS.map(m => (
+                  <option key={m.value} className="bg-[#060a12]" value={m.value}>
+                    {m.label} ({m.quota})
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="h-6 w-px bg-white/[0.08] mx-1 hidden md:block" />

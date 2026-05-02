@@ -53,7 +53,7 @@ const STORY_SUGGESTIONS = [
 ];
 
 export default function AIChat() {
-  const { country, language, isAudioEnabled, toggleAudio, activeConversationId, setActiveConversationId, loadedMessages, setLoadedMessages } = useAppStore();
+  const { country, language, isAudioEnabled, toggleAudio, activeConversationId, setActiveConversationId, loadedMessages, setLoadedMessages, geminiModel } = useAppStore();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -121,7 +121,7 @@ export default function AIChat() {
     if (isTyping) return;
 
     // Build the payload
-    const payload: any = { message: text || "Analyze this file.", country, language, mode, history: messages };
+    const payload: any = { message: text || "Analyze this file.", country, language, mode, history: messages, model: geminiModel };
     
     // Add media if present
     if (selectedFile) {

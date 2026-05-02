@@ -33,7 +33,7 @@ const COUNTRY_SYSTEMS: Record<string, { system: string; head: string; term: stri
 const ALL_COUNTRIES = Object.keys(COUNTRY_SYSTEMS);
 
 export default function SidebarRight() {
-  const { country, setCountry } = useAppStore();
+  const { country, setCountry, geminiModel } = useAppStore();
   const [compareWith, setCompareWith] = useState('USA');
   const [isCompareOpen, setIsCompareOpen] = useState(true);
   const [isRecentOpen, setIsRecentOpen] = useState(true);
@@ -44,7 +44,7 @@ export default function SidebarRight() {
     const fetchNews = async () => {
       setLoadingNews(true);
       try {
-        const res = await fetch(`/api/news?country=${encodeURIComponent(country)}`);
+        const res = await fetch(`/api/news?country=${encodeURIComponent(country)}&model=${encodeURIComponent(geminiModel || 'gemini-2.0-flash')}`);
         if (res.ok) {
           const data = await res.json();
           setLiveNews(data);
@@ -56,7 +56,7 @@ export default function SidebarRight() {
       }
     };
     fetchNews();
-  }, [country]);
+  }, [country, geminiModel]);
 
   const current = COUNTRY_SYSTEMS[country] || COUNTRY_SYSTEMS['India'];
   const compare = COUNTRY_SYSTEMS[compareWith] || COUNTRY_SYSTEMS['USA'];

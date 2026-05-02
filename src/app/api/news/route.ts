@@ -6,10 +6,12 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const country = searchParams.get('country') || 'India';
+    const clientModel = searchParams.get('model') || 'gemini-2.0-flash';
+    const ALLOWED_MODELS = new Set(['gemini-2.0-flash','gemini-1.5-flash-8b','gemini-2.5-flash','gemini-2.5-pro']);
+    const activeModel = ALLOWED_MODELS.has(clientModel) ? clientModel : 'gemini-2.0-flash';
 
     // Same fallback logic as chat API
     let ai: any;
-    let modelName = 'gemini-2.0-flash';
 
     if (process.env.GEMINI_API_KEY) {
       ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -31,7 +33,6 @@ export async function GET(req: Request) {
           }
         }
       };
-      modelName = 'gemini-1.5-flash';
     } else {
       return NextResponse.json({ error: 'SERVER_CONFIG_ERROR: GEMINI_API_KEY is missing in Cloud Run environment variables.' }, { status: 500 });
     }
@@ -48,7 +49,7 @@ Format:
     const prompt = `Find the 3 most recent and important news articles regarding elections or politics in ${country}. Use googleSearch to ensure they are from the last few days.`;
 
     const response = await ai.models.generateContent({
-      model: modelName,
+      model: activeModel,
       contents: [{ text: prompt }],
       config: {
         systemInstruction: systemPrompt,
