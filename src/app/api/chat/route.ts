@@ -264,6 +264,18 @@ LANGUAGE: ${langInstruction}`;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Internal Server Error';
     console.error('[/api/chat] Error:', message);
+    
+    // Check for rate limit / quota errors
+    const errMsg = message.toLowerCase();
+    if (errMsg.includes('quota') || errMsg.includes('429') || errMsg.includes('rate limit')) {
+      return NextResponse.json({ 
+        response: "⚠️ **Google AI Rate Limit Exceeded:**\n\nYou are using the Free Tier of Gemini which allows 15 requests per minute. You have been testing very fast! Please wait **60 seconds** and ask your question again. 🙏", 
+        imagePrompt: null, 
+        registrationUrl: null, 
+        intent: "general" 
+      });
+    }
+
     return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }
 }
