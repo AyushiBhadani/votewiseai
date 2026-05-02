@@ -71,8 +71,15 @@ Do NOT use markdown \`\`\`json. Return RAW JSON only.`;
 
     return NextResponse.json(result);
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Moderation API error:', error);
-    return NextResponse.json({ error: 'Failed to moderate content' }, { status: 500 });
+    
+    // Check for rate limit / quota errors
+    const errMsg = error?.message?.toLowerCase() || '';
+    if (errMsg.includes('quota') || errMsg.includes('429') || errMsg.includes('rate limit')) {
+      return NextResponse.json({ safe: false, reason: "Google AI Rate Limit Exceeded: Please wait a minute and try again." });
+    }
+
+    return NextResponse.json({ safe: false, reason: "Moderation service temporarily unavailable." }, { status: 500 });
   }
 }

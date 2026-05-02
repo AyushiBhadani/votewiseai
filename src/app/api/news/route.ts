@@ -67,14 +67,23 @@ Format:
       news = JSON.parse(cleanText);
     } catch (parseError) {
       console.error("Failed to parse Gemini news response:", cleanText);
-      // Fallback response if AI hallucinates invalid JSON
-      news = [{ id: "error", date: new Date().toISOString().split('T')[0], title: "Live Feed Updating...", description: "Check back shortly for live news.", source: "System" }];
+      news = [{ id: "error", date: new Date().toISOString().split('T')[0], title: "Formatting Error", description: "Failed to parse live news.", source: "System" }];
     }
 
     return NextResponse.json(news);
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('News API error:', error);
+    const errMsg = error?.message?.toLowerCase() || '';
+    if (errMsg.includes('quota') || errMsg.includes('429') || errMsg.includes('rate limit')) {
+      return NextResponse.json([{ 
+        id: "error-rate-limit", 
+        date: new Date().toISOString().split('T')[0], 
+        title: "AI Rate Limit Exceeded", 
+        description: "Google Gemini Free Tier limit reached (15 requests/min). Please wait 60 seconds and try again.", 
+        source: "System Alert" 
+      }]);
+    }
     return NextResponse.json({ error: 'Failed to fetch news' }, { status: 500 });
   }
 }
