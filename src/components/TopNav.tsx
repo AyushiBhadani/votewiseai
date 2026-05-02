@@ -101,28 +101,35 @@ export default function TopNav() {
         )}
       </AnimatePresence>
 
-      <nav className="h-16 w-full flex items-center justify-between px-6 flex-shrink-0 z-50 border-b border-white/[0.04] bg-black/20 backdrop-blur-xl">
-        {/* Logo */}
+      <nav className="h-16 w-full flex items-center justify-between px-4 md:px-6 flex-shrink-0 z-50 border-b border-white/[0.04] bg-black/20 backdrop-blur-xl">
+        {/* Logo & Mobile Menu */}
         <div className="flex items-center space-x-3">
+          <button 
+            className="md:hidden p-2 -ml-2 text-muted-foreground hover:text-foreground"
+            onClick={() => useAppStore.getState().setIsMobileMenuOpen(true)}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          
           <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
             <Globe className="w-5 h-5 text-white" />
             <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-background animate-pulse" />
           </div>
-          <div>
+          <div className="hidden sm:block">
             <span className="font-bold text-lg text-foreground tracking-tight leading-none">
               Vote<span className="gradient-text">Wise</span> AI
             </span>
             <div className="flex items-center space-x-1">
               <Zap className="w-2.5 h-2.5 text-emerald-400" />
-              <span className="text-[10px] text-emerald-400 font-medium">Powered by Gemini · 15+ Languages</span>
+              <span className="text-[10px] text-emerald-400 font-medium">Powered by Gemini</span>
             </div>
           </div>
         </div>
 
         {/* Controls */}
         <div className="flex items-center space-x-2">
-          {/* Country Selector */}
-          <div className="relative">
+          {/* Country Selector - Hidden on mobile */}
+          <div className="relative hidden md:block">
             <select
               className="appearance-none bg-white/[0.04] border border-white/[0.08] hover:border-primary/40 rounded-xl pl-3 pr-8 py-2 text-sm font-medium focus:ring-2 focus:ring-primary/50 outline-none transition-all cursor-pointer text-foreground backdrop-blur-sm"
               value={country}
@@ -137,8 +144,8 @@ export default function TopNav() {
             <div className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">▾</div>
           </div>
 
-          {/* Language Selector */}
-          <div className="relative">
+          {/* Language Selector - Hidden on mobile */}
+          <div className="relative hidden md:block">
             <select
               className="appearance-none bg-white/[0.04] border border-white/[0.08] hover:border-primary/40 rounded-xl pl-3 pr-8 py-2 text-sm font-medium focus:ring-2 focus:ring-primary/50 outline-none transition-all cursor-pointer text-foreground backdrop-blur-sm"
               value={language}
@@ -153,7 +160,7 @@ export default function TopNav() {
             <div className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">▾</div>
           </div>
 
-          <div className="h-6 w-px bg-white/[0.08] mx-1" />
+          <div className="h-6 w-px bg-white/[0.08] mx-1 hidden md:block" />
 
           <button onClick={handleNotification}
             className="relative p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] text-muted-foreground hover:text-foreground hover:border-primary/40 transition-all"
@@ -161,7 +168,7 @@ export default function TopNav() {
           >
             <Bell className="w-4 h-4" />
             {reminders.length > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
+               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-500 rounded-full animate-pulse" />
             )}
           </button>
 
@@ -177,7 +184,7 @@ export default function TopNav() {
           </button>
 
           <button onClick={handleDownload}
-            className="btn-primary-glow flex items-center space-x-2 px-4 py-2 rounded-xl font-semibold text-sm text-white"
+            className="hidden md:flex btn-primary-glow items-center space-x-2 px-4 py-2 rounded-xl font-semibold text-sm text-white"
           >
             <Download className="w-4 h-4" />
             <span>Download PDF</span>

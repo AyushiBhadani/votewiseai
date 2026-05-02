@@ -35,10 +35,10 @@ export default function DashboardView() {
       </AnimatePresence>
 
       {/* MAIN: Chat (hero) + Cards below */}
-      <div className="flex-1 flex flex-col min-w-0 p-4 gap-4 overflow-hidden min-h-0">
+      <div className="flex-1 flex flex-col min-w-0 p-2 md:p-4 gap-3 md:gap-4 overflow-hidden min-h-0">
 
-        {/* Toggle button */}
-        <div className="flex items-center space-x-2 flex-shrink-0">
+        {/* Toggle button - Hidden on mobile */}
+        <div className="hidden md:flex items-center space-x-2 flex-shrink-0">
           <button
             onClick={() => setShowLeftPanel(p => !p)}
             className="flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs font-medium text-muted-foreground hover:text-foreground bg-white/[0.04] border border-white/[0.08] hover:border-primary/30 transition-all"

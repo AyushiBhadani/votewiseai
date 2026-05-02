@@ -59,8 +59,21 @@ export default function Home() {
         className="h-screen w-full overflow-hidden bg-[#050b14] flex font-sans"
         aria-label="VoteWise AI Application"
       >
-        {/* Left Icon Navigation Strip */}
-        <nav aria-label="Primary navigation">
+        {/* Mobile Sidebar Overlay */}
+        <div className="md:hidden">
+          {useAppStore().isMobileMenuOpen && (
+            <div 
+              className="fixed inset-0 bg-black/60 z-[90] backdrop-blur-sm"
+              onClick={() => useAppStore.getState().setIsMobileMenuOpen(false)}
+            />
+          )}
+          <div className={`fixed inset-y-0 left-0 z-[100] transform transition-transform duration-300 ease-in-out ${useAppStore().isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <LeftNavStrip />
+          </div>
+        </div>
+
+        {/* Desktop Left Icon Navigation Strip */}
+        <nav aria-label="Primary navigation" className="hidden md:block">
           <LeftNavStrip />
         </nav>
 

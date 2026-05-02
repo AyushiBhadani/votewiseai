@@ -25,7 +25,10 @@ export default function LeftNavStrip() {
     return (
       <div className="relative group">
         <motion.button
-          onClick={() => setActiveNavTab(id)}
+          onClick={() => {
+            setActiveNavTab(id);
+            useAppStore.getState().setIsMobileMenuOpen(false);
+          }}
           whileTap={{ scale: 0.92 }}
           className={`relative w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 ${
             isActive

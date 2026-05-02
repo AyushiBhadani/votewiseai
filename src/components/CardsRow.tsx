@@ -64,13 +64,13 @@ export default function CardsRow() {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="flex overflow-x-auto md:grid md:grid-cols-3 gap-4 pb-2 snap-x snap-mandatory custom-scrollbar">
 
         {/* ── Meme Card ── */}
         <motion.div
           whileHover={{ scale: 1.02 }}
           onClick={() => setActiveModal('meme')}
-          className="glass-card rounded-2xl p-4 flex flex-col cursor-pointer glow-hover group"
+          className="w-[85vw] sm:w-[280px] md:w-auto flex-shrink-0 snap-center glass-card rounded-2xl p-4 flex flex-col cursor-pointer glow-hover group"
         >
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center space-x-2">
@@ -94,7 +94,7 @@ export default function CardsRow() {
         <motion.div
           whileHover={{ scale: 1.02 }}
           onClick={() => setActiveModal('knowledge')}
-          className="rounded-2xl p-4 border border-primary/20 flex flex-col justify-between cursor-pointer bg-gradient-to-br from-primary/20 to-violet-500/10 glow-hover"
+          className="w-[85vw] sm:w-[280px] md:w-auto flex-shrink-0 snap-center rounded-2xl p-4 border border-primary/20 flex flex-col justify-between cursor-pointer bg-gradient-to-br from-primary/20 to-violet-500/10 glow-hover"
         >
           <div>
             <div className="flex items-center space-x-2 mb-1">
@@ -113,7 +113,7 @@ export default function CardsRow() {
         <motion.div
           whileHover={{ scale: 1.02 }}
           onClick={() => setActiveModal('simulation')}
-          className="glass-card rounded-2xl p-4 flex flex-col cursor-pointer glow-hover group"
+          className="w-[85vw] sm:w-[280px] md:w-auto flex-shrink-0 snap-center glass-card rounded-2xl p-4 flex flex-col cursor-pointer glow-hover group"
         >
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center space-x-2">

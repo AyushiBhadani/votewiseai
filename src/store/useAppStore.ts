@@ -9,6 +9,7 @@ interface AppState {
   activeConversationId: string | null;
   reminders: string[];
   loadedMessages: any[];
+  isMobileMenuOpen: boolean;
   setCountry: (country: string) => void;
   setLanguage: (lang: string) => void;
   toggleAudio: () => void;
@@ -16,6 +17,7 @@ interface AppState {
   setActiveConversationId: (id: string | null) => void;
   toggleReminder: (eventId: string) => void;
   setLoadedMessages: (msgs: any[]) => void;
+  setIsMobileMenuOpen: (isOpen: boolean) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -28,6 +30,7 @@ export const useAppStore = create<AppState>()(
       activeConversationId: null,
       reminders: [],
       loadedMessages: [],
+      isMobileMenuOpen: false,
       setCountry: (country) => set({ country }),
       setLanguage: (language) => set({ language }),
       toggleAudio: () => set((state) => ({ isAudioEnabled: !state.isAudioEnabled })),
@@ -39,6 +42,7 @@ export const useAppStore = create<AppState>()(
           : [...state.reminders, eventId],
       })),
       setLoadedMessages: (loadedMessages) => set({ loadedMessages }),
+      setIsMobileMenuOpen: (isMobileMenuOpen) => set({ isMobileMenuOpen }),
     }),
     {
       name: 'votewise-storage',
