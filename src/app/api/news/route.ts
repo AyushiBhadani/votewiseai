@@ -33,7 +33,7 @@ export async function GET(req: Request) {
       };
       modelName = 'gemini-1.5-flash';
     } else {
-      return NextResponse.json({ error: 'No API configuration found.' }, { status: 500 });
+      return NextResponse.json({ error: 'SERVER_CONFIG_ERROR: GEMINI_API_KEY is missing in Cloud Run environment variables.' }, { status: 500 });
     }
 
     const systemPrompt = `You are a strict JSON data API returning the latest real-time news about elections and politics.

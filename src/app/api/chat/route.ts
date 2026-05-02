@@ -93,6 +93,15 @@ export async function POST(req: NextRequest) {
       mediaMimeType?: string;
     };
 
+    // ── API key ────────────────────────────────────────────────
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'SERVER_CONFIG_ERROR: GEMINI_API_KEY is missing in Cloud Run environment variables.' },
+        { status: 500 }
+      );
+    }
+
     if (!message || typeof message !== 'string') {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
@@ -134,15 +143,6 @@ export async function POST(req: NextRequest) {
           { headers: { 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } }
         );
       }
-    }
-
-    // ── API key ────────────────────────────────────────────────
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return NextResponse.json(
-        { response: '⚠️ [Setup Required]: Add GEMINI_API_KEY to your .env.local file.' },
-        { status: 200 }
-      );
     }
 
     const ai = new GoogleGenAI({ apiKey });
@@ -269,13 +269,13 @@ LANGUAGE: ${langInstruction}`;
     const errString = (String(error) + ' ' + message).toLowerCase();
     if (errString.includes('quota') || errString.includes('429') || errString.includes('rate limit') || errString.includes('exhausted') || errString.includes('too many')) {
       return NextResponse.json({ 
-        response: "⚠️ **Google AI Rate Limit Exceeded:**\n\nYou are using the Free Tier of Gemini which allows 15 requests per minute. You have been testing very fast! Please wait **60 seconds** and ask your question again. 🙏", 
+        response: "⚠️ **Google AI Rate Limit Exceeded:**\n\nYou are using the Free Tier of Gemini which allows 15 requests per minute. Please wait **60 seconds** and try again. 🙏", 
         imagePrompt: null, 
         registrationUrl: null, 
         intent: "general" 
       });
     }
 
-    return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
+    return NextResponse.json({ error: `AI Error: ${message}` }, { status: 500 });
   }
 }
