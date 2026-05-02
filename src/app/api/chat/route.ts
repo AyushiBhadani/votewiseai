@@ -285,7 +285,7 @@ LANGUAGE: ${langInstruction}`;
       const fallbackText = demoResponses[reqLanguage] || demoResponses['English'];
 
       return NextResponse.json({ 
-        response: fallbackText + "\n\n*(Note: This is a simulated response to bypass the Google API rate limit during your demo!)*", 
+        response: fallbackText + `\n\n*(Debug Error: ${message})*\n*(Note: This is a simulated response to bypass the Google API limit during your demo!)*`, 
         imagePrompt: null, 
         registrationUrl: null, 
         intent: "general" 
