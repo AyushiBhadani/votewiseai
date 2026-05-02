@@ -58,7 +58,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 }
 
 export default function CommunityView() {
-  const { country, setActiveNavTab } = useAppStore();
+  const { country, geminiModel, setActiveNavTab } = useAppStore();
   const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
@@ -102,7 +102,7 @@ export default function CommunityView() {
       const modRes = await fetch('/api/moderate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: newPost, country }),
+        body: JSON.stringify({ message: newPost, country, model: geminiModel }),
       });
       const modData = await modRes.json();
 

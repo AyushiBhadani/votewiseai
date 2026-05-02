@@ -7,7 +7,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const country = searchParams.get('country') || 'India';
     const clientModel = searchParams.get('model') || 'gemini-2.0-flash';
-    const ALLOWED_MODELS = new Set(['gemini-2.0-flash','gemini-1.5-flash-8b','gemini-2.5-flash','gemini-2.5-pro']);
+    const ALLOWED_MODELS = new Set(['gemini-2.0-flash','gemini-1.5-flash','gemini-2.5-flash-preview-04-17','gemini-2.5-pro-preview-05-06']);
     const activeModel = ALLOWED_MODELS.has(clientModel) ? clientModel : 'gemini-2.0-flash';
 
     // Same fallback logic as chat API

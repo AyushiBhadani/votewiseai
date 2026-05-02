@@ -42,10 +42,10 @@ const LANGUAGES = [
 ];
 
 const MODELS = [
-  { value: 'gemini-2.0-flash',    label: '2.0 Flash',    quota: '1,500/day ✅' },
-  { value: 'gemini-1.5-flash-8b', label: '1.5 Flash 8B', quota: '1,500/day ✅' },
-  { value: 'gemini-2.5-flash',    label: '2.5 Flash',    quota: '20/day ⚠️' },
-  { value: 'gemini-2.5-pro',      label: '2.5 Pro',      quota: '100/day 🔥' },
+  { value: 'gemini-2.0-flash',                label: '2.0 Flash',    quota: '1,500/day ✅' },
+  { value: 'gemini-1.5-flash',                label: '1.5 Flash',    quota: '1,500/day ✅' },
+  { value: 'gemini-2.5-flash-preview-04-17',  label: '2.5 Flash',    quota: '500/day ⚠️' },
+  { value: 'gemini-2.5-pro-preview-05-06',    label: '2.5 Pro 🔥',   quota: '100/day 🔥' },
 ];
 
 export default function TopNav() {

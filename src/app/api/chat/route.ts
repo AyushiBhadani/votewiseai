@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
       mediaMimeType?: string;
       model?: string;
     };
-    const ALLOWED_MODELS = new Set(['gemini-2.0-flash','gemini-1.5-flash-8b','gemini-2.5-flash','gemini-2.5-pro']);
+    const ALLOWED_MODELS = new Set(['gemini-2.0-flash','gemini-1.5-flash','gemini-2.5-flash-preview-04-17','gemini-2.5-pro-preview-05-06']);
     const activeModel = ALLOWED_MODELS.has(clientModel ?? '') ? clientModel! : 'gemini-2.0-flash';
 
     // ── API key ────────────────────────────────────────────────

@@ -4,14 +4,16 @@ import { GoogleGenAI } from '@google/genai';
 
 export async function POST(req: Request) {
   try {
-    const { message, country } = await req.json();
+    const { message, country, model: clientModel } = await req.json();
 
     if (!message || typeof message !== 'string') {
       return NextResponse.json({ error: 'Missing message' }, { status: 400 });
     }
 
+    const ALLOWED_MODELS = new Set(['gemini-2.0-flash','gemini-1.5-flash','gemini-2.5-flash-preview-04-17','gemini-2.5-pro-preview-05-06']);
+    const activeModel = ALLOWED_MODELS.has(clientModel) ? clientModel : 'gemini-2.0-flash';
+
     let ai: any;
-    let modelName = 'gemini-2.0-flash';
 
     if (process.env.GEMINI_API_KEY) {
       ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -32,7 +34,6 @@ export async function POST(req: Request) {
           }
         }
       };
-      modelName = 'gemini-1.5-flash';
     } else {
       return NextResponse.json({ error: 'No API configuration found.' }, { status: 500 });
     }
@@ -50,7 +51,7 @@ If the message is safe and civil, return a JSON object: { "safe": true, "reason"
 Do NOT use markdown \`\`\`json. Return RAW JSON only.`;
 
     const response = await ai.models.generateContent({
-      model: modelName,
+      model: activeModel,
       contents: [{ text: `Analyze this post: "${message}"` }],
       config: {
         systemInstruction: systemPrompt,
