@@ -1,10 +1,18 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, Scale } from 'lucide-react';
+import { ChevronDown, ChevronUp, Scale, Newspaper } from 'lucide-react';
 import { getPastEvents } from '@/data/electionEvents';
+
+interface LiveNews {
+  id: string;
+  date: string;
+  title: string;
+  description: string;
+  source: string;
+}
 
 const COUNTRY_SYSTEMS: Record<string, { system: string; head: string; term: string; houses: string; votingAge: number; method: string }> = {
   India:          { system: 'Parliamentary Republic',      head: 'Prime Minister',      term: '5 years',   houses: 'Lok Sabha + Rajya Sabha',          votingAge: 18, method: 'First-Past-The-Post' },
@@ -29,10 +37,29 @@ export default function SidebarRight() {
   const [compareWith, setCompareWith] = useState('USA');
   const [isCompareOpen, setIsCompareOpen] = useState(true);
   const [isRecentOpen, setIsRecentOpen] = useState(true);
+  const [liveNews, setLiveNews] = useState<LiveNews[]>([]);
+  const [loadingNews, setLoadingNews] = useState(false);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      setLoadingNews(true);
+      try {
+        const res = await fetch(`/api/news?country=${encodeURIComponent(country)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setLiveNews(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch live news", err);
+      } finally {
+        setLoadingNews(false);
+      }
+    };
+    fetchNews();
+  }, [country]);
 
   const current = COUNTRY_SYSTEMS[country] || COUNTRY_SYSTEMS['India'];
   const compare = COUNTRY_SYSTEMS[compareWith] || COUNTRY_SYSTEMS['USA'];
-  const recentResults = getPastEvents(country, 4);
 
   const fields = [
     { label: 'System',     cA: current.system,       cB: compare.system },
@@ -46,23 +73,43 @@ export default function SidebarRight() {
   return (
     <div className="h-full flex flex-col gap-4 min-h-0">
 
-      {/* Recent Results */}
+      {/* Live Recent Results (News) */}
       <div className="glass-card rounded-2xl p-4 border border-white/[0.06] flex-shrink-0">
         <div className="flex justify-between items-center mb-3 cursor-pointer" onClick={() => setIsRecentOpen(p => !p)}>
-          <h3 className="font-bold text-foreground text-sm">Recent Results · {country}</h3>
-          {isRecentOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+          <h3 className="font-bold text-foreground text-sm flex items-center space-x-2">
+            <Newspaper className="w-4 h-4 text-emerald-400" />
+            <span>Live News · {country}</span>
+          </h3>
+          <div className="flex items-center space-x-2">
+            {loadingNews && (
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+            )}
+            {isRecentOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+          </div>
         </div>
         <AnimatePresence>
           {isRecentOpen && (
             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
-              {recentResults.length === 0 ? (
-                <p className="text-xs text-muted-foreground">No recent results for {country}.</p>
+              {loadingNews ? (
+                <div className="flex flex-col items-center justify-center py-4 space-y-2 opacity-50">
+                  <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-[10px] text-muted-foreground">Fetching live updates...</p>
+                </div>
+              ) : liveNews.length === 0 ? (
+                <p className="text-xs text-muted-foreground">No live news found for {country}.</p>
               ) : (
                 <div className="space-y-2">
-                  {recentResults.map(ev => (
-                    <div key={ev.id} className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.06]">
-                      <p className="text-[11px] font-semibold text-foreground truncate">{ev.title}</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-2">{ev.description}</p>
+                  {liveNews.map((news, idx) => (
+                    <div key={news.id || idx} className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.06] hover:border-emerald-500/30 transition-all cursor-pointer">
+                      <h4 className="text-[11px] font-semibold text-foreground truncate hover:text-emerald-400 transition-colors">{news.title}</h4>
+                      <p className="text-[10px] text-muted-foreground mt-0.5 line-clamp-2">{news.description}</p>
+                      <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-white/[0.05]">
+                        <span className="text-[8px] font-medium text-emerald-500/70 uppercase tracking-wider">{news.source || 'News'}</span>
+                        <span className="text-[9px] text-muted-foreground/60">{news.date}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
