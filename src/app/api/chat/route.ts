@@ -83,12 +83,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
 
-    const { message, country, language, mode, history } = body as {
+    const { message, country, language, mode, history, mediaBase64, mediaMimeType } = body as {
       message: string;
       country: string;
       language: string;
       mode: string;
       history?: ChatMessage[];
+      mediaBase64?: string;
+      mediaMimeType?: string;
     };
 
     if (!message || typeof message !== 'string') {
@@ -171,6 +173,7 @@ CONTENT RULES:
 - Be factual, concise, and completely bias-free
 - Never recommend candidates or parties
 - Cite official sources or authorities when relevant (e.g., "According to the Election Commission of India...")
+- Use the googleSearch tool to find up-to-date information, news, and maps for the CURRENT YEAR
 - Handle greetings warmly and offer to help with specific topics
 CONTEXT: User is asking about elections in ${safeCountry} in ${safeLanguage}.
 INTENT GUIDANCE: ${intentSubPrompt}
@@ -192,6 +195,7 @@ LANGUAGE: ${langInstruction}`;
         config: {
           systemInstruction: systemPrompt,
           temperature: safeMode === 'story' ? 0.85 : 0.45,
+          tools: [{ googleSearch: {} }],
         },
         history: conversationHistory,
       });
@@ -199,10 +203,25 @@ LANGUAGE: ${langInstruction}`;
       responseText = (chatResponse.text ?? '').trim();
     } else {
       // Single-turn: standard generate for first message
+      // Build contents array supporting text + optional media
+      const contentParts: any[] = [{ text: sanitizedMessage }];
+      if (mediaBase64 && mediaMimeType) {
+        contentParts.push({
+          inlineData: {
+            data: mediaBase64,
+            mimeType: mediaMimeType
+          }
+        });
+      }
+
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
-        contents: sanitizedMessage,
-        config: { systemInstruction: systemPrompt, temperature: safeMode === 'story' ? 0.85 : 0.45 },
+        contents: contentParts,
+        config: { 
+          systemInstruction: systemPrompt, 
+          temperature: safeMode === 'story' ? 0.85 : 0.45,
+          tools: [{ googleSearch: {} }], 
+        },
       });
       responseText = (response.text ?? '').trim();
     }
