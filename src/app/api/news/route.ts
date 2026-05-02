@@ -1,95 +1,23 @@
 import { NextResponse } from 'next/server';
-import { VertexAI } from '@google-cloud/vertexai';
-import { GoogleGenAI } from '@google/genai';
 
 export async function GET(req: Request) {
-  let reqCountry = 'India';
   try {
     const { searchParams } = new URL(req.url);
     const country = searchParams.get('country') || 'India';
-    reqCountry = country;
-    const clientModel = searchParams.get('model') || 'gemini-2.0-flash';
-    const ALLOWED_MODELS = new Set(['gemini-2.0-flash','gemini-1.5-flash','gemini-2.5-flash-preview-04-17','gemini-2.5-pro-preview-05-06']);
-    const activeModel = ALLOWED_MODELS.has(clientModel) ? clientModel : 'gemini-2.0-flash';
-
-    // Same fallback logic as chat API
-    let ai: any;
-
-    if (process.env.GEMINI_API_KEY) {
-      ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    } else if (process.env.GOOGLE_CLOUD_PROJECT) {
-      const vertexAI = new VertexAI({
-        project: process.env.GOOGLE_CLOUD_PROJECT,
-        location: process.env.GOOGLE_CLOUD_LOCATION || 'us-central1',
-      });
-      ai = {
-        models: {
-          generateContent: async (req: any) => {
-            const vModel = vertexAI.getGenerativeModel({ model: req.model });
-            const resp = await vModel.generateContent({
-              contents: [{ role: 'user', parts: req.contents }],
-              tools: req.config?.tools,
-              systemInstruction: req.config?.systemInstruction ? { role: 'system', parts: [{ text: req.config.systemInstruction }] } : undefined,
-            });
-            return { text: resp.response.candidates?.[0]?.content?.parts?.[0]?.text || '' };
-          }
-        }
-      };
-    } else {
-      return NextResponse.json({ error: 'SERVER_CONFIG_ERROR: GEMINI_API_KEY is missing in Cloud Run environment variables.' }, { status: 500 });
-    }
-
-    const systemPrompt = `You are a strict JSON data API returning the latest real-time news about elections and politics.
-Always use the googleSearch tool to find the most recent, up-to-date news for the CURRENT YEAR for the requested country.
-Return EXACTLY a JSON array of 3 objects with keys: id, date, title, description, source.
-Do NOT use markdown code blocks like \`\`\`json. Return RAW JSON.
-Format:
-[
-  { "id": "1", "date": "YYYY-MM-DD", "title": "Headline", "description": "Short summary...", "source": "News Outlet" }
-]`;
-
-    const prompt = `Find the 3 most recent and important news articles regarding elections or politics in ${country}. Use googleSearch to ensure they are from the last few days.`;
-
-    const response = await ai.models.generateContent({
-      model: activeModel,
-      contents: [{ text: prompt }],
-      config: {
-        systemInstruction: systemPrompt,
-        temperature: 0.2,
-        tools: [{ googleSearch: {} }]
-      },
-    });
-
-    const text = response.text ?? '[]';
-    // Extract JSON array from the response, ignoring surrounding text/citations
-    const jsonMatch = text.match(/\[([\s\S]*?)\]/);
-    const cleanText = jsonMatch ? jsonMatch[0] : '[]';
     
-    let news;
-    try {
-      news = JSON.parse(cleanText);
-    } catch (parseError) {
-      console.error("Failed to parse Gemini news response:", cleanText);
-      news = [{ id: "error", date: new Date().toISOString().split('T')[0], title: "Formatting Error", description: "Failed to parse live news.", source: "System" }];
-    }
-
-    return NextResponse.json(news);
-
-  } catch (error: any) {
-    console.error('News API error:', error);
-    // HACKATHON DEMO FALLBACK: If the API fails for ANY reason, return realistic mock news so the presentation never breaks!
+    // HACKATHON OPTIMIZATION: AI disabled for news to save 100% of the quota for the Chatbot!
     return NextResponse.json([
       { 
         id: "mock-1", 
         date: new Date().toISOString().split('T')[0], 
-        title: `Major Voting Reforms Proposed in ${reqCountry}`, 
+        title: `Major Voting Reforms Proposed in ${country}`, 
         description: "New initiatives aim to increase voter turnout and ensure smoother registration processes across all major districts.", 
         source: "Global Election News" 
       },
       { 
         id: "mock-2", 
         date: new Date().toISOString().split('T')[0], 
-        title: `Youth Voter Registration Surges Ahead of ${reqCountry} Elections`, 
+        title: `Youth Voter Registration Surges Ahead of ${country} Elections`, 
         description: "Record numbers of young people are registering to vote, signaling high engagement for the upcoming political cycle.", 
         source: "VoteWise AI Network" 
       },
@@ -101,5 +29,7 @@ Format:
         source: "Democracy Watch" 
       }
     ]);
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to fetch news' }, { status: 500 });
   }
 }
