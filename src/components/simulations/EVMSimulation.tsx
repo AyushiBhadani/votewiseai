@@ -11,25 +11,39 @@ const EVM_CANDIDATES = [
 export const EVMSimulation = ({ onVoteCast }: { onVoteCast: (vote: string) => void }) => {
   const [selected, setSelected] = useState<string | null>(null);
 
-  const playBeep = () => {
+  const playBeep = async () => {
     try {
       const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const oscillator = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      
-      oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(2500, audioCtx.currentTime); // High pitch BEEP
-      
-      gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-      
-      oscillator.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-      
-      oscillator.start();
-      oscillator.stop(audioCtx.currentTime + 0.5);
+
+      // Some browsers suspend audio until user gesture — resume it
+      if (audioCtx.state === 'suspended') {
+        await audioCtx.resume();
+      }
+
+      // Play two short electronic beeps like a real EVM
+      const playTone = (startTime: number, duration: number) => {
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = 'square'; // Sharp electronic sound
+        oscillator.frequency.setValueAtTime(1200, startTime);
+
+        gainNode.gain.setValueAtTime(0.8, startTime); // Much louder
+        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start(startTime);
+        oscillator.stop(startTime + duration);
+      };
+
+      // Beep 1 at time 0, Beep 2 at time 0.25s
+      playTone(audioCtx.currentTime, 0.18);
+      playTone(audioCtx.currentTime + 0.25, 0.18);
+
     } catch (e) {
-      console.log("Audio not supported");
+      console.log("Audio not supported", e);
     }
   };
 
