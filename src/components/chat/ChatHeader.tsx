@@ -54,7 +54,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative w-full h-28 overflow-hidden"
+          className="relative w-full h-14 overflow-hidden"
         >
           <Image
             src={bannerSrc}
