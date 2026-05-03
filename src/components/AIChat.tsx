@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/store/useAppStore';
 import { createConversation, updateConversation, Message } from '@/lib/firestore';
 import GuideMe from './GuideMe';
+import Image from 'next/image';
 
 // Sub-components
 import { ChatHeader } from './chat/ChatHeader';
@@ -26,6 +27,15 @@ const SUGGESTIONS_BY_LANG: Record<string, string[]> = {
 };
 
 const STORY_SUGGESTIONS = ["Tell me a story about why voting matters 📖", "Explain elections like I'm 8 years old 🧒", "Use a village story to explain democracy 🏘️"];
+
+const COUNTRY_BANNERS: Record<string, string> = {
+  India: '/banners/india.png',
+  USA: '/banners/usa.png',
+  UK: '/banners/uk.png',
+  Australia: '/banners/australia.png',
+  France: '/banners/france.png',
+  Canada: '/banners/canada.png',
+};
 
 export default function AIChat() {
   const { country, language, isAudioEnabled, toggleAudio, activeConversationId, setActiveConversationId, loadedMessages, setLoadedMessages, geminiModel } = useAppStore();
@@ -158,19 +168,45 @@ export default function AIChat() {
         setIsGuideOpen={setIsGuideOpen} handleExplainSimply={handleExplainSimply} hasMessages={messages.length > 0}
       />
 
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
+      <div className="flex-1 overflow-y-auto custom-scrollbar relative">
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full px-8 py-10 text-center">
-            <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-2xl animate-float ${mode === 'story' ? 'bg-amber-500 shadow-amber-500/30' : 'bg-primary shadow-primary/30'}`}>
-              {mode === 'story' ? <BookMarked className="w-8 h-8 text-white" /> : <Sparkles className="w-8 h-8 text-white" />}
-            </motion.div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">{mode === 'story' ? 'Let me tell you a story! 📖' : 'How can I help you today?'}</h3>
-            <div className="flex items-center space-x-1.5 mb-7 px-3 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-full">
-              <Languages className="w-3.5 h-3.5 text-primary" />
-              <span className="text-xs text-muted-foreground">Currently: <strong className="text-foreground">{language}</strong></span>
-            </div>
-            <div className="grid grid-cols-2 gap-2 w-full max-w-lg">
-              {suggestions.map((s, i) => <button key={i} onClick={() => handleSend(s)} className="text-left text-xs p-3 rounded-xl border bg-white/[0.04] border-white/[0.08] text-muted-foreground hover:text-foreground hover:bg-white/[0.08] transition-all">{s}</button>)}
+          <div className="relative flex flex-col items-center justify-center h-full text-center overflow-hidden">
+            {/* Full-area Country Banner Background */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={country}
+                initial={{ opacity: 0, scale: 1.05 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8 }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={COUNTRY_BANNERS[country] || '/banners/india.png'}
+                  alt={`${country} election`}
+                  fill
+                  className="object-cover object-center"
+                  priority
+                />
+                {/* Layered dark overlay for readability */}
+                <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/60 to-background/90" />
+                <div className="absolute inset-0 bg-background/30" />
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Content on top of banner */}
+            <div className="relative z-10 px-8 py-10 flex flex-col items-center">
+              <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-2xl animate-float ${mode === 'story' ? 'bg-amber-500 shadow-amber-500/30' : 'bg-primary shadow-primary/30'}`}>
+                {mode === 'story' ? <BookMarked className="w-8 h-8 text-white" /> : <Sparkles className="w-8 h-8 text-white" />}
+              </motion.div>
+              <h3 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">{mode === 'story' ? 'Let me tell you a story! 📖' : 'How can I help you today?'}</h3>
+              <div className="flex items-center space-x-1.5 mb-7 px-3 py-1.5 bg-black/30 backdrop-blur-sm border border-white/20 rounded-full">
+                <Languages className="w-3.5 h-3.5 text-primary" />
+                <span className="text-xs text-white/80">Currently: <strong className="text-white">{language}</strong></span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 w-full max-w-lg">
+                {suggestions.map((s, i) => <button key={i} onClick={() => handleSend(s)} className="text-left text-xs p-3 rounded-xl border bg-black/30 backdrop-blur-sm border-white/20 text-white/80 hover:text-white hover:bg-black/50 hover:border-white/40 transition-all">{s}</button>)}
+              </div>
             </div>
           </div>
         ) : (
