@@ -47,7 +47,7 @@ export const FranceSimulation = ({ onVoteCast }: { onVoteCast: (vote: string) =>
               onClick={() => onVoteCast(selected!)}
               className="w-full bg-blue-700 text-white py-3 rounded-lg font-bold shadow-lg hover:bg-blue-800 transition-all"
             >
-              Insérer dans l'urne 🗳️
+              Insérer dans l&apos;urne 🗳️
             </button>
             <button onClick={() => setStep(1)} className="mt-4 text-xs text-slate-400 hover:text-slate-600">Go back</button>
           </motion.div>

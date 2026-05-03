@@ -3,8 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Globe, Languages, Volume2, Bell, Shield, Palette,
-  Moon, Smartphone, Info, ChevronRight, ToggleLeft, ToggleRight, Check
+  Globe, Volume2, Bell, Shield, Info, Check
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 
@@ -36,7 +35,7 @@ function Toggle({ enabled, onToggle }: { enabled: boolean; onToggle: () => void 
   );
 }
 
-function Section({ title, icon: Icon, children }: { title: string; icon: any; children: React.ReactNode }) {
+function Section({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
       className="glass-card rounded-2xl overflow-hidden border border-white/[0.06]">
@@ -67,7 +66,6 @@ export default function SettingsView() {
   const { country, setCountry, language, setLanguage, isAudioEnabled, toggleAudio, reminders } = useAppStore();
   const [notifications, setNotifications] = useState(true);
   const [storyImages, setStoryImages] = useState(true);
-  const [autoSpeak, setAutoSpeak] = useState(isAudioEnabled);
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {

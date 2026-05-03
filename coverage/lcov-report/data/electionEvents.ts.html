@@ -1,0 +1,622 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for data/electionEvents.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">data</a> electionEvents.ts</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/20</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/10</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/8</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/16</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a>
+<a name='L168'></a><a href='#L168'>168</a>
+<a name='L169'></a><a href='#L169'>169</a>
+<a name='L170'></a><a href='#L170'>170</a>
+<a name='L171'></a><a href='#L171'>171</a>
+<a name='L172'></a><a href='#L172'>172</a>
+<a name='L173'></a><a href='#L173'>173</a>
+<a name='L174'></a><a href='#L174'>174</a>
+<a name='L175'></a><a href='#L175'>175</a>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a>
+<a name='L178'></a><a href='#L178'>178</a>
+<a name='L179'></a><a href='#L179'>179</a>
+<a name='L180'></a><a href='#L180'>180</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export type EventType = 'election' | 'debate' | 'deadline' | 'judgement' | 'general';
+&nbsp;
+export interface ElectionEvent {
+  id: string;
+  date: string; // YYYY-MM-DD
+  title: string;
+  description: string;
+  type: EventType;
+  country: string;
+}
+&nbsp;
+export const <span class="cstat-no" title="statement not covered" >electionEvents: ElectionEvent[] = [</span>
+  // =================== INDIA ===================
+  { id: "in-ls-2019-p1", date: "2019-04-11", title: "Lok Sabha 2019 – Phase 1", description: "First phase of the 17th General Election. 91 constituencies voted.", type: "election", country: "India" },
+  { id: "in-ls-2019-p2", date: "2019-04-18", title: "Lok Sabha 2019 – Phase 2", description: "Second phase covering 97 constituencies across 13 states.", type: "election", country: "India" },
+  { id: "in-ls-2019-p3", date: "2019-04-23", title: "Lok Sabha 2019 – Phase 3", description: "Third phase. 115 constituencies across 14 states and UTs voted.", type: "election", country: "India" },
+  { id: "in-ls-2019-p7", date: "2019-05-19", title: "Lok Sabha 2019 – Final Phase", description: "Seventh and final phase of voting. All phases complete.", type: "election", country: "India" },
+  { id: "in-ls-2019-result", date: "2019-05-23", title: "Lok Sabha 2019 Results", description: "NDA won a landslide majority. BJP secured 303 seats on its own.", type: "judgement", country: "India" },
+  { id: "in-delhi-2020", date: "2020-02-08", title: "Delhi Assembly Election", description: "AAP retained power with 62/70 seats. BJP won 8 seats.", type: "election", country: "India" },
+  { id: "in-delhi-2020-result", date: "2020-02-11", title: "Delhi Election Results", description: "AAP won a massive majority with 62 out of 70 seats.", type: "judgement", country: "India" },
+  { id: "in-bihar-2020", date: "2020-10-28", title: "Bihar Assembly Elections – Phase 1", description: "First phase of Bihar State Assembly Elections 2020.", type: "election", country: "India" },
+  { id: "in-kerala-2021", date: "2021-04-06", title: "Kerala Assembly Election", description: "LDF retained power in a historic second consecutive win.", type: "election", country: "India" },
+  { id: "in-up-2022-p1", date: "2022-02-10", title: "Uttar Pradesh Elections – Phase 1", description: "First of seven phases in the UP Assembly Elections.", type: "election", country: "India" },
+  { id: "in-up-2022-result", date: "2022-03-10", title: "UP/Goa/Punjab/Uttarakhand Results", description: "BJP retained UP. AAP swept Punjab. Congress lost Goa.", type: "judgement", country: "India" },
+  { id: "in-gujarat-2022", date: "2022-12-01", title: "Gujarat Assembly Election – Phase 1", description: "BJP contested in its home state. Phase 1 of 2.", type: "election", country: "India" },
+  { id: "in-gujarat-2022-result", date: "2022-12-08", title: "Gujarat Election Results", description: "BJP won a record 156/182 seats in Gujarat. Biggest victory ever.", type: "judgement", country: "India" },
+  { id: "in-ls-2024-p1", date: "2024-04-19", title: "Lok Sabha 2024 – Phase 1", description: "First phase of the 18th General Election. 102 constituencies.", type: "election", country: "India" },
+  { id: "in-ls-2024-p2", date: "2024-04-26", title: "Lok Sabha 2024 – Phase 2", description: "Second phase. 89 constituencies across multiple states.", type: "election", country: "India" },
+  { id: "in-ls-2024-p3", date: "2024-05-07", title: "Lok Sabha 2024 – Phase 3", description: "Third phase of voting in the 2024 General Election.", type: "election", country: "India" },
+  { id: "in-ls-2024-p4", date: "2024-05-13", title: "Lok Sabha 2024 – Phase 4", description: "Fourth phase of voting in the 2024 General Election.", type: "election", country: "India" },
+  { id: "in-ls-2024-p5", date: "2024-05-20", title: "Lok Sabha 2024 – Phase 5", description: "Fifth phase of voting in the 2024 General Election.", type: "election", country: "India" },
+  { id: "in-ls-2024-p6", date: "2024-05-25", title: "Lok Sabha 2024 – Phase 6", description: "Sixth phase of voting in the 2024 General Election.", type: "election", country: "India" },
+  { id: "in-ls-2024-p7", date: "2024-06-01", title: "Lok Sabha 2024 – Phase 7 (Final)", description: "Final phase of the 2024 General Election.", type: "election", country: "India" },
+  { id: "in-ls-2024-result", date: "2024-06-04", title: "Lok Sabha 2024 Results Declared", description: "NDA retained majority. BJP won 240 seats. INDIA alliance won 232.", type: "judgement", country: "India" },
+  { id: "in-mh-2024", date: "2024-11-20", title: "Maharashtra Assembly Election", description: "Assembly election for the state of Maharashtra.", type: "election", country: "India" },
+  { id: "in-jh-2024", date: "2024-11-13", title: "Jharkhand Assembly Election – Phase 1", description: "First phase of Jharkhand Assembly elections.", type: "election", country: "India" },
+  { id: "in-delhi-2025", date: "2025-02-05", title: "Delhi Assembly Election 2025", description: "AAP vs BJP battle for Delhi. High-stakes state election.", type: "election", country: "India" },
+  { id: "in-delhi-2025-result", date: "2025-02-08", title: "Delhi 2025 Election Results", description: "BJP won Delhi after 27 years, defeating AAP.", type: "judgement", country: "India" },
+  { id: "in-bihar-2025", date: "2025-10-01", title: "Bihar Assembly Election 2025 (Projected)", description: "Upcoming Bihar state elections projected for late 2025.", type: "election", country: "India" },
+  { id: "in-up-2027", date: "2027-02-01", title: "Uttar Pradesh Elections 2027 (Projected)", description: "Next Uttar Pradesh Assembly Elections projected for early 2027.", type: "election", country: "India" },
+  { id: "in-ls-2029", date: "2029-05-01", title: "Lok Sabha General Election 2029 (Projected)", description: "Next Indian General Election projected for 2029.", type: "election", country: "India" },
+&nbsp;
+  // =================== USA ===================
+  { id: "us-midterm-2018", date: "2018-11-06", title: "US Midterm Elections 2018", description: "Democrats won the House of Representatives. Republicans retained the Senate.", type: "election", country: "USA" },
+  { id: "us-primary-iowa-2020", date: "2020-02-03", title: "Iowa Democratic Caucus 2020", description: "First major Democratic primary event of the 2020 cycle.", type: "election", country: "USA" },
+  { id: "us-super-tuesday-2020", date: "2020-03-03", title: "Super Tuesday 2020", description: "14 states voted in Democratic primary. Biden and Sanders led.", type: "election", country: "USA" },
+  { id: "us-election-2020", date: "2020-11-03", title: "US Presidential Election 2020", description: "General election between Donald Trump (R) and Joe Biden (D).", type: "election", country: "USA" },
+  { id: "us-election-2020-result", date: "2020-11-07", title: "Biden Declared Winner 2020", description: "Joe Biden declared President-elect after winning key states.", type: "judgement", country: "USA" },
+  { id: "us-georgia-runoff-2021", date: "2021-01-05", title: "Georgia Senate Runoff Elections", description: "Democrats won both Georgia Senate seats, flipping the Senate.", type: "election", country: "USA" },
+  { id: "us-inauguration-2021", date: "2021-01-20", title: "Biden Inauguration Day", description: "Joe Biden sworn in as the 46th President of the United States.", type: "judgement", country: "USA" },
+  { id: "us-midterm-2022", date: "2022-11-08", title: "US Midterm Elections 2022", description: "Democrats retained Senate. Republicans narrowly won the House.", type: "election", country: "USA" },
+  { id: "us-debate-1-2024", date: "2024-06-27", title: "First Presidential Debate 2024", description: "Biden vs Trump — historic debate between a sitting president and former president.", type: "debate", country: "USA" },
+  { id: "us-debate-2-2024", date: "2024-09-10", title: "Second Presidential Debate 2024", description: "Harris vs Trump presidential debate after Biden withdrew from the race.", type: "debate", country: "USA" },
+  { id: "us-election-2024", date: "2024-11-05", title: "US Presidential Election 2024", description: "General election between Donald Trump (R) and Kamala Harris (D).", type: "election", country: "USA" },
+  { id: "us-election-2024-result", date: "2024-11-06", title: "Trump Declared Winner 2024", description: "Donald Trump won the 2024 election, becoming the 47th President.", type: "judgement", country: "USA" },
+  { id: "us-inauguration-2025", date: "2025-01-20", title: "Trump Inauguration Day", description: "Donald Trump sworn in as 47th President of the United States.", type: "judgement", country: "USA" },
+  { id: "us-midterm-2026", date: "2026-11-03", title: "US Midterm Elections 2026 (Projected)", description: "Congressional midterm elections. All House and 1/3 Senate seats up.", type: "election", country: "USA" },
+  { id: "us-election-2028", date: "2028-11-07", title: "US Presidential Election 2028 (Projected)", description: "Next US Presidential Election projected for November 2028.", type: "election", country: "USA" },
+&nbsp;
+  // =================== UK ===================
+  { id: "uk-brexit-2016", date: "2016-06-23", title: "Brexit Referendum", description: "UK voted 52% to 48% to leave the European Union.", type: "election", country: "UK" },
+  { id: "uk-general-2017", date: "2017-06-08", title: "UK General Election 2017", description: "Snap election called by Theresa May. Hung parliament resulted.", type: "election", country: "UK" },
+  { id: "uk-general-2019", date: "2019-12-12", title: "UK General Election 2019", description: "Conservatives won an 80-seat majority. Boris Johnson remained PM.", type: "election", country: "UK" },
+  { id: "uk-local-2021", date: "2021-05-06", title: "UK Local Elections 2021", description: "Conservatives gained ground in traditional Labour areas.", type: "election", country: "UK" },
+  { id: "uk-local-2022", date: "2022-05-05", title: "UK Local Elections 2022", description: "Labour and Lib Dems gained seats from Conservatives.", type: "election", country: "UK" },
+  { id: "uk-local-2023", date: "2023-05-04", title: "UK Local Elections 2023", description: "Labour made significant gains ahead of the General Election.", type: "election", country: "UK" },
+  { id: "uk-general-2024", date: "2024-07-04", title: "UK General Election 2024", description: "Labour won a historic 412 seats landslide. Keir Starmer became PM.", type: "election", country: "UK" },
+  { id: "uk-general-2024-result", date: "2024-07-05", title: "UK Election Results 2024", description: "Labour landslide. Conservatives suffered worst defeat since 1906.", type: "judgement", country: "UK" },
+  { id: "uk-local-2025", date: "2025-05-01", title: "UK Local Elections 2025", description: "Local council elections across England.", type: "election", country: "UK" },
+  { id: "uk-general-2029", date: "2029-05-01", title: "UK General Election 2029 (Projected)", description: "Next UK Parliamentary General Election projected for 2029.", type: "election", country: "UK" },
+&nbsp;
+  // =================== AUSTRALIA ===================
+  { id: "au-federal-2019", date: "2019-05-18", title: "Australian Federal Election 2019", description: "Scott Morrison's Liberal-National Coalition won unexpectedly, dubbed 'the miracle election'.", type: "election", country: "Australia" },
+  { id: "au-federal-2019-result", date: "2019-05-18", title: "Coalition Wins 2019", description: "Scott Morrison became PM after surprise Coalition victory over Labor.", type: "judgement", country: "Australia" },
+  { id: "au-qld-2020", date: "2020-10-31", title: "Queensland State Election 2020", description: "Labor won a majority in Queensland state parliament.", type: "election", country: "Australia" },
+  { id: "au-wa-2021", date: "2021-03-13", title: "Western Australia Election 2021", description: "Labor won historic 53/59 seats landslide in WA.", type: "election", country: "Australia" },
+  { id: "au-federal-2022", date: "2022-05-21", title: "Australian Federal Election 2022", description: "Anthony Albanese's Labor Party ended 9 years of Coalition government.", type: "election", country: "Australia" },
+  { id: "au-federal-2022-result", date: "2022-05-22", title: "Labor Wins 2022", description: "Anthony Albanese became PM, ending the Morrison era.", type: "judgement", country: "Australia" },
+  { id: "au-voice-ref-2023", date: "2023-10-14", title: "Voice to Parliament Referendum", description: "Australians voted on whether to create an Indigenous Voice to Parliament. The 'No' vote won.", type: "election", country: "Australia" },
+  { id: "au-federal-2025", date: "2025-05-03", title: "Australian Federal Election 2025", description: "Federal election between Labor and the Liberal-National Coalition.", type: "election", country: "Australia" },
+  { id: "au-federal-2025-result", date: "2025-05-03", title: "Australia 2025 Election Result", description: "Anthony Albanese's Labor returned to government.", type: "judgement", country: "Australia" },
+  { id: "au-federal-2028", date: "2028-05-01", title: "Australian Federal Election 2028 (Projected)", description: "Next scheduled Australian federal election.", type: "election", country: "Australia" },
+&nbsp;
+  // =================== CANADA ===================
+  { id: "ca-federal-2019", date: "2019-10-21", title: "Canadian Federal Election 2019", description: "Trudeau's Liberals won a minority government. Conservatives won the popular vote.", type: "election", country: "Canada" },
+  { id: "ca-federal-2021", date: "2021-09-20", title: "Canadian Federal Election 2021", description: "Snap election called by Trudeau. Liberals again won minority government.", type: "election", country: "Canada" },
+  { id: "ca-bc-2024", date: "2024-10-19", title: "British Columbia Election 2024", description: "BC NDP won a narrow majority over BC Conservatives.", type: "election", country: "Canada" },
+  { id: "ca-federal-2025", date: "2025-04-28", title: "Canadian Federal Election 2025", description: "Snap election. Mark Carney's Liberals vs Pierre Poilievre's Conservatives.", type: "election", country: "Canada" },
+  { id: "ca-federal-2025-result", date: "2025-04-29", title: "Canada 2025 Result", description: "Mark Carney's Liberal Party won the federal election.", type: "judgement", country: "Canada" },
+  { id: "ca-federal-2029", date: "2029-10-01", title: "Canadian Federal Election 2029 (Projected)", description: "Next scheduled Canadian federal election.", type: "election", country: "Canada" },
+&nbsp;
+  // =================== FRANCE ===================
+  { id: "fr-pres-2017", date: "2017-04-23", title: "French Presidential Election 2017 – Round 1", description: "Emmanuel Macron and Marine Le Pen advanced to the second round.", type: "election", country: "France" },
+  { id: "fr-pres-2017-r2", date: "2017-05-07", title: "French Presidential Election 2017 – Round 2", description: "Emmanuel Macron won 66% of the vote, defeating Marine Le Pen.", type: "election", country: "France" },
+  { id: "fr-pres-2022", date: "2022-04-10", title: "French Presidential Election 2022 – Round 1", description: "Macron and Le Pen qualified for Round 2 again.", type: "election", country: "France" },
+  { id: "fr-pres-2022-r2", date: "2022-04-24", title: "French Presidential Election 2022 – Round 2", description: "Macron re-elected with 58.5% of votes over Marine Le Pen.", type: "election", country: "France" },
+  { id: "fr-legis-2024", date: "2024-06-30", title: "French Legislative Elections 2024 – Round 1", description: "Snap legislative elections called after EU election results.", type: "election", country: "France" },
+  { id: "fr-legis-2024-r2", date: "2024-07-07", title: "French Legislative Elections 2024 – Round 2", description: "Hung parliament result. Left bloc won most seats but no majority.", type: "election", country: "France" },
+  { id: "fr-pres-2027", date: "2027-04-01", title: "French Presidential Election 2027 (Projected)", description: "Next French presidential election. Macron cannot run again.", type: "election", country: "France" },
+&nbsp;
+  // =================== GERMANY ===================
+  { id: "de-federal-2017", date: "2017-09-24", title: "German Federal Election 2017", description: "CDU/CSU won but lost seats. SPD, AfD, FDP, Greens, Linke all entered Bundestag.", type: "election", country: "Germany" },
+  { id: "de-federal-2021", date: "2021-09-26", title: "German Federal Election 2021", description: "SPD narrowly won. Olaf Scholz formed a traffic light coalition (SPD+FDP+Greens).", type: "election", country: "Germany" },
+  { id: "de-federal-2021-result", date: "2021-12-08", title: "Scholz Becomes Chancellor", description: "Olaf Scholz sworn in as Chancellor, ending Merkel's 16-year era.", type: "judgement", country: "Germany" },
+  { id: "de-federal-2025", date: "2025-02-23", title: "German Federal Election 2025", description: "Snap election after government collapse. CDU/CSU vs SPD vs AfD.", type: "election", country: "Germany" },
+  { id: "de-federal-2025-result", date: "2025-02-23", title: "Germany 2025 Election Result", description: "CDU/CSU won most seats. Friedrich Merz became Chancellor.", type: "judgement", country: "Germany" },
+  { id: "de-federal-2029", date: "2029-09-01", title: "German Federal Election 2029 (Projected)", description: "Next scheduled German federal election.", type: "election", country: "Germany" },
+&nbsp;
+  // =================== JAPAN ===================
+  { id: "jp-lower-2021", date: "2021-10-31", title: "Japan House of Representatives 2021", description: "LDP-Komeito coalition retained majority under PM Kishida.", type: "election", country: "Japan" },
+  { id: "jp-upper-2022", date: "2022-07-10", title: "Japan House of Councillors 2022", description: "LDP won decisive majority days after Shinzo Abe's assassination.", type: "election", country: "Japan" },
+  { id: "jp-lower-2024", date: "2024-10-27", title: "Japan House of Representatives 2024", description: "LDP lost its majority. Historic defeat for the ruling coalition.", type: "election", country: "Japan" },
+  { id: "jp-lower-2024-result", date: "2024-10-27", title: "Japan 2024 Election Result", description: "LDP-Komeito coalition lost majority for first time since 2009.", type: "judgement", country: "Japan" },
+  { id: "jp-upper-2025", date: "2025-07-01", title: "Japan House of Councillors 2025 (Projected)", description: "Upper house election scheduled for mid-2025.", type: "election", country: "Japan" },
+  { id: "jp-lower-2028", date: "2028-10-01", title: "Japan General Election 2028 (Projected)", description: "Next scheduled House of Representatives election.", type: "election", country: "Japan" },
+&nbsp;
+  // =================== BRAZIL ===================
+  { id: "br-pres-2018", date: "2018-10-07", title: "Brazilian Presidential Election 2018 – Round 1", description: "Jair Bolsonaro led Round 1 with 46% of votes.", type: "election", country: "Brazil" },
+  { id: "br-pres-2018-r2", date: "2018-10-28", title: "Brazilian Presidential Election 2018 – Round 2", description: "Bolsonaro won 55% over PT's Fernando Haddad.", type: "election", country: "Brazil" },
+  { id: "br-pres-2022", date: "2022-10-02", title: "Brazilian Presidential Election 2022 – Round 1", description: "Lula (PT) and Bolsonaro advanced. No candidate won outright.", type: "election", country: "Brazil" },
+  { id: "br-pres-2022-r2", date: "2022-10-30", title: "Brazilian Presidential Election 2022 – Round 2", description: "Lula won with 50.9%, becoming president for a historic 3rd term.", type: "election", country: "Brazil" },
+  { id: "br-pres-2022-result", date: "2022-10-30", title: "Lula Wins Brazil 2022", description: "Luiz Inácio Lula da Silva won the presidency, defeating incumbent Bolsonaro.", type: "judgement", country: "Brazil" },
+  { id: "br-pres-2026", date: "2026-10-04", title: "Brazilian Presidential Election 2026 (Projected)", description: "Lula up for re-election. Major political contest expected.", type: "election", country: "Brazil" },
+&nbsp;
+  // =================== SOUTH AFRICA ===================
+  { id: "za-general-2019", date: "2019-05-08", title: "South Africa General Election 2019", description: "ANC won with 57.5%. Cyril Ramaphosa continued as President.", type: "election", country: "South Africa" },
+  { id: "za-general-2024", date: "2024-05-29", title: "South Africa General Election 2024", description: "ANC lost its parliamentary majority for the first time since 1994.", type: "election", country: "South Africa" },
+  { id: "za-general-2024-result", date: "2024-06-14", title: "South Africa 2024 Result – GNU Formed", description: "ANC formed a Government of National Unity (GNU) with DA and other parties.", type: "judgement", country: "South Africa" },
+  { id: "za-general-2029", date: "2029-05-01", title: "South Africa General Election 2029 (Projected)", description: "Next South African general election.", type: "election", country: "South Africa" },
+&nbsp;
+  // =================== PAKISTAN ===================
+  { id: "pk-general-2018", date: "2018-07-25", title: "Pakistan General Election 2018", description: "PTI won most seats. Imran Khan became Prime Minister.", type: "election", country: "Pakistan" },
+  { id: "pk-general-2018-result", date: "2018-08-18", title: "Imran Khan Becomes PM", description: "Imran Khan sworn in as Pakistan's 22nd Prime Minister.", type: "judgement", country: "Pakistan" },
+  { id: "pk-pm-removal-2022", date: "2022-04-10", title: "Imran Khan Removed via No-Confidence Vote", description: "Imran Khan became the first Pakistani PM removed through a parliamentary no-confidence vote.", type: "judgement", country: "Pakistan" },
+  { id: "pk-general-2024", date: "2024-02-08", title: "Pakistan General Election 2024", description: "PTI-backed independents won most seats despite Imran Khan being jailed.", type: "election", country: "Pakistan" },
+  { id: "pk-general-2024-result", date: "2024-02-11", title: "Pakistan 2024 Coalition Government", description: "PML-N's Shehbaz Sharif formed a coalition government.", type: "judgement", country: "Pakistan" },
+  { id: "pk-general-2029", date: "2029-02-01", title: "Pakistan General Election 2029 (Projected)", description: "Next scheduled Pakistani general election.", type: "election", country: "Pakistan" },
+&nbsp;
+  // =================== BANGLADESH ===================
+  { id: "bd-general-2018", date: "2018-12-30", title: "Bangladesh General Election 2018", description: "Sheikh Hasina's Awami League won landslide with 96% of seats.", type: "election", country: "Bangladesh" },
+  { id: "bd-general-2024", date: "2024-01-07", title: "Bangladesh General Election 2024", description: "Awami League won again amid opposition boycott led by BNP.", type: "election", country: "Bangladesh" },
+  { id: "bd-revolution-2024", date: "2024-08-05", title: "Sheikh Hasina Resigns – Student Revolution", description: "Sheikh Hasina fled Bangladesh after mass student protests. Dr Muhammad Yunus became interim leader.", type: "judgement", country: "Bangladesh" },
+  { id: "bd-general-2026", date: "2026-06-01", title: "Bangladesh General Election 2026 (Projected)", description: "Scheduled election under interim government led by Muhammad Yunus.", type: "election", country: "Bangladesh" },
+&nbsp;
+  // =================== SRI LANKA ===================
+  { id: "lk-pres-2019", date: "2019-11-16", title: "Sri Lanka Presidential Election 2019", description: "Gotabaya Rajapaksa won with 52.25% of votes.", type: "election", country: "Sri Lanka" },
+  { id: "lk-pres-resignation-2022", date: "2022-07-09", title: "Gotabaya Rajapaksa Resigns", description: "Massive public protests over economic crisis. President Rajapaksa fled to Maldives.", type: "judgement", country: "Sri Lanka" },
+  { id: "lk-pres-2024", date: "2024-09-21", title: "Sri Lanka Presidential Election 2024", description: "Anura Kumara Dissanayake (AKD) of NPP won the presidency.", type: "election", country: "Sri Lanka" },
+  { id: "lk-pres-2024-result", date: "2024-09-23", title: "AKD Wins Sri Lanka 2024", description: "First left-wing president in Sri Lanka's history elected.", type: "judgement", country: "Sri Lanka" },
+  { id: "lk-parliament-2024", date: "2024-11-14", title: "Sri Lanka Parliamentary Election 2024", description: "NPP won a 2/3 supermajority in Parliament under President AKD.", type: "election", country: "Sri Lanka" },
+  { id: "lk-pres-2029", date: "2029-09-01", title: "Sri Lanka Presidential Election 2029 (Projected)", description: "Next Sri Lankan presidential election.", type: "election", country: "Sri Lanka" },
+];
+&nbsp;
+// Get events for a specific month and country
+export const <span class="cstat-no" title="statement not covered" >getEventsForMonth = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>y</span>ear: number, month: number, country: string): ElectionEvent[] =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  return electionEvents.filter(<span class="fstat-no" title="function not covered" >event </span>=&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (event.country !== country) <span class="cstat-no" title="statement not covered" >return false;</span></span>
+    const eventDate = <span class="cstat-no" title="statement not covered" >new Date(event.date);</span>
+<span class="cstat-no" title="statement not covered" >    return eventDate.getFullYear() === year &amp;&amp; eventDate.getMonth() === month;</span>
+  });
+};
+&nbsp;
+// Get all upcoming events for a country
+export const <span class="cstat-no" title="statement not covered" >getUpcomingEvents = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>c</span>ountry: string, limit = <span class="branch-0 cbranch-no" title="branch not covered" >5)</span>: ElectionEvent[] =&gt; {</span>
+  const today = <span class="cstat-no" title="statement not covered" >new Date();</span>
+<span class="cstat-no" title="statement not covered" >  return electionEvents</span>
+    .filter(<span class="fstat-no" title="function not covered" >e </span>=&gt; <span class="cstat-no" title="statement not covered" >e.country === country &amp;&amp; new Date(e.date) &gt;= today)</span>
+    .sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; <span class="cstat-no" title="statement not covered" >new Date(a.date).getTime() - new Date(b.date).getTime())</span>
+    .slice(0, limit);
+};
+&nbsp;
+// Get recent past events
+export const <span class="cstat-no" title="statement not covered" >getPastEvents = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(</span>c</span>ountry: string, limit = <span class="branch-0 cbranch-no" title="branch not covered" >5)</span>: ElectionEvent[] =&gt; {</span>
+  const today = <span class="cstat-no" title="statement not covered" >new Date();</span>
+<span class="cstat-no" title="statement not covered" >  return electionEvents</span>
+    .filter(<span class="fstat-no" title="function not covered" >e </span>=&gt; <span class="cstat-no" title="statement not covered" >e.country === country &amp;&amp; new Date(e.date) &lt; today)</span>
+    .sort(<span class="fstat-no" title="function not covered" >(a</span>, b) =&gt; <span class="cstat-no" title="statement not covered" >new Date(b.date).getTime() - new Date(a.date).getTime())</span>
+    .slice(0, limit);
+};
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-05-03T07:23:02.746Z
+            </div>
+        <script src="../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../sorter.js"></script>
+        <script src="../block-navigation.js"></script>
+    </body>
+</html>
+    

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { Message } from '@/lib/firestore';
 
 interface AppState {
   country: string;
@@ -9,7 +10,7 @@ interface AppState {
   activeNavTab: string;
   activeConversationId: string | null;
   reminders: string[];
-  loadedMessages: any[];
+  loadedMessages: Message[];
   isMobileMenuOpen: boolean;
   setCountry: (country: string) => void;
   setLanguage: (lang: string) => void;
@@ -18,13 +19,14 @@ interface AppState {
   setActiveNavTab: (tab: string) => void;
   setActiveConversationId: (id: string | null) => void;
   toggleReminder: (eventId: string) => void;
-  setLoadedMessages: (msgs: any[]) => void;
+  setLoadedMessages: (msgs: Message[]) => void;
   setIsMobileMenuOpen: (isOpen: boolean) => void;
 }
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set) => ({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (set: any) => ({
       country: 'India',
       language: 'English',
       geminiModel: 'gemini-2.0-flash',

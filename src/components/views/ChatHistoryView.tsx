@@ -23,7 +23,8 @@ export default function ChatHistoryView() {
     }
   };
 
-  useEffect(() => { fetchConversations(); }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { setTimeout(() => fetchConversations(), 0); }, []);
 
   const handleOpen = (convo: Conversation) => {
     // Load the actual messages into the store so AIChat can display them
@@ -48,7 +49,7 @@ export default function ChatHistoryView() {
     setActiveNavTab('home');
   };
 
-  const formatDate = (timestamp: any) => {
+  const formatDate = (timestamp: unknown) => {
     if (!timestamp) return '';
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     const now = new Date();
@@ -65,7 +66,7 @@ export default function ChatHistoryView() {
   // Group by date
   const today = conversations.filter(c => {
     if (!c.updatedAt) return false;
-    const d = (c.updatedAt as any).toDate ? (c.updatedAt as any).toDate() : new Date();
+    const d = (c.updatedAt as unknown as { toDate: () => Date }).toDate ? (c.updatedAt as unknown as { toDate: () => Date }).toDate() : new Date();
     return new Date().toDateString() === d.toDateString();
   });
   const older = conversations.filter(c => !today.includes(c));
@@ -159,7 +160,7 @@ function ConversationCard({ convo, onOpen, onDelete, formatDate }: {
   convo: Conversation;
   onOpen: (c: Conversation) => void;
   onDelete: (e: React.MouseEvent, id: string) => void;
-  formatDate: (t: any) => string;
+  formatDate: (t: unknown) => string;
 }) {
   const preview = convo.messages?.find(m => m.role === 'assistant' && m.id !== '1')?.content || 'No response yet';
 

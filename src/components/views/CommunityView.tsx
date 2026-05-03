@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Users, MessageCircle, TrendingUp, Heart, Share2,
-  BookOpen, AlertCircle, ChevronDown, ChevronUp, ExternalLink, Send, ShieldAlert
+  Users, MessageCircle, TrendingUp, Heart,
+  BookOpen, AlertCircle, ChevronDown, ChevronUp, Send, ShieldAlert
 } from 'lucide-react';
 import { useAppStore } from '@/store/useAppStore';
 import { getCommunityPosts, createCommunityPost, CommunityPost } from '@/lib/firestore';
@@ -27,14 +27,6 @@ const FAQS: { q: string; a: string }[] = [
   { q: 'Can NRIs (Non-Resident Indians) vote?', a: 'Yes! NRIs registered on Indian electoral rolls can vote in person at their registered constituency. Postal voting for NRIs was approved in 2019 as a pilot. Check ECI website for updates.' },
 ];
 
-const DISCUSSIONS: { avatar: string; name: string; country: string; message: string; likes: number; time: string }[] = [
-  { avatar: '👩‍💼', name: 'Priya S.', country: '🇮🇳', message: 'Just registered on the ECI portal — took less than 5 minutes! Highly recommend checking if you\'re still on the rolls.', likes: 47, time: '2h ago' },
-  { avatar: '👨‍🎓', name: 'James R.', country: '🇺🇸', message: 'Story Mode helped me explain the Electoral College to my 10-year-old. She finally gets it! 😄 The illustrations are so good.', likes: 83, time: '5h ago' },
-  { avatar: '👩‍🌾', name: 'Fatima A.', country: '🇧🇩', message: 'The AI assistant answered my question about voter registration in Bengali perfectly. Impressed!', likes: 31, time: '1d ago' },
-  { avatar: '🧑‍💻', name: 'Carlos M.', country: '🇧🇷', message: 'Important reminder: In Brazil, voting is mandatory for 18-70 year olds. Don\'t skip it or you\'ll face penalties!', likes: 62, time: '1d ago' },
-  { avatar: '👴', name: 'Tanaka H.', country: '🇯🇵', message: 'The Japan election calendar is very detailed. Thank you for including the House of Councillors data!', likes: 19, time: '2d ago' },
-  { avatar: '👩‍⚕️', name: 'Sophie D.', country: '🇫🇷', message: 'French two-round system is complex but the comparison tool on VoteWise explained it clearly. Love the country comparison feature!', likes: 44, time: '3d ago' },
-];
 
 function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
@@ -85,7 +77,11 @@ export default function CommunityView() {
   const toggleLike = (id: string) => {
     setLikedPosts(prev => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };

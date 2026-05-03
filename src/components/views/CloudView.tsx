@@ -59,7 +59,7 @@ export default function CloudView() {
     }
   };
 
-  const formatDate = (timestamp: any) => {
+  const formatDate = (timestamp: unknown) => {
     if (!timestamp) return '';
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     const now = new Date();
@@ -113,7 +113,7 @@ export default function CloudView() {
                 </div>
                 <div className="flex items-start space-x-3">
                   <span className="text-primary font-bold shrink-0">3.</span>
-                  <p><strong className="text-foreground">Same device / same browser</strong> = you always see your history. Firebase remembers your anonymous ID in your browser's storage.</p>
+                  <p><strong className="text-foreground">Same device / same browser</strong> = you always see your history. Firebase remembers your anonymous ID in your browser&apos;s storage.</p>
                 </div>
                 <div className="flex items-start space-x-3">
                   <span className="text-amber-400 font-bold shrink-0">⚠</span>
@@ -161,7 +161,7 @@ export default function CloudView() {
             <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground">
               <CloudOff className="w-14 h-14 mb-4 opacity-20" />
               <p className="font-medium text-foreground">No downloads yet</p>
-              <p className="text-sm mt-1 max-w-xs">Click the <strong>"Download PDF"</strong> button in the top bar to save an election guide. It will appear here instantly.</p>
+              <p className="text-sm mt-1 max-w-xs">Click the <strong>&quot;Download PDF&quot;</strong> button in the top bar to save an election guide. It will appear here instantly.</p>
             </div>
           ) : (
             <div className="divide-y divide-white/[0.04]">

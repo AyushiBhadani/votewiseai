@@ -88,8 +88,8 @@ export async function getAllConversations(): Promise<Conversation[]> {
   const snap = await getDocs(q);
   const docs = snap.docs.map(d => ({ id: d.id, ...d.data() })) as Conversation[];
   return docs.sort((a, b) => {
-    const aT = (a.updatedAt as any)?.toMillis?.() ?? 0;
-    const bT = (b.updatedAt as any)?.toMillis?.() ?? 0;
+    const aT = (a.updatedAt as Timestamp | null)?.toMillis?.() ?? 0;
+    const bT = (b.updatedAt as Timestamp | null)?.toMillis?.() ?? 0;
     return bT - aT;
   });
 }
@@ -116,8 +116,8 @@ export async function getMyDownloads(): Promise<DownloadedFile[]> {
   const snap = await getDocs(q);
   const docs = snap.docs.map(d => ({ id: d.id, ...d.data() })) as DownloadedFile[];
   return docs.sort((a, b) => {
-    const aT = (a.downloadedAt as any)?.toMillis?.() ?? 0;
-    const bT = (b.downloadedAt as any)?.toMillis?.() ?? 0;
+    const aT = (a.downloadedAt as Timestamp | null)?.toMillis?.() ?? 0;
+    const bT = (b.downloadedAt as Timestamp | null)?.toMillis?.() ?? 0;
     return bT - aT;
   });
 }
@@ -147,8 +147,8 @@ export async function getCommunityPosts(country: string): Promise<CommunityPost[
   const snap = await getDocs(q);
   const docs = snap.docs.map(d => ({ id: d.id, ...d.data() })) as CommunityPost[];
   return docs.sort((a, b) => {
-    const aT = (a.createdAt as any)?.toMillis?.() ?? 0;
-    const bT = (b.createdAt as any)?.toMillis?.() ?? 0;
+    const aT = (a.createdAt as Timestamp | null)?.toMillis?.() ?? 0;
+    const bT = (b.createdAt as Timestamp | null)?.toMillis?.() ?? 0;
     return bT - aT;
   });
 }

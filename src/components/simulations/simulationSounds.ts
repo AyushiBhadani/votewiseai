@@ -6,7 +6,7 @@
 
 const getAudioContext = async (): Promise<AudioContext | null> => {
   try {
-    const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const audioCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     if (audioCtx.state === 'suspended') {
       await audioCtx.resume();
     }

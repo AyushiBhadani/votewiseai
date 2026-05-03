@@ -32,7 +32,7 @@ export default function CalendarView() {
 
   const playNotificationSound = () => {
     try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
@@ -45,7 +45,7 @@ export default function CalendarView() {
       gain.connect(ctx.destination);
       osc.start();
       osc.stop(ctx.currentTime + 0.6);
-    } catch (e) { /* silent fail */ }
+    } catch { /* silent fail */ }
   };
 
   const handleToggleReminder = (event: ElectionEvent) => {
@@ -80,7 +80,9 @@ export default function CalendarView() {
     const days = [];
 
     for (let i = 0; i < firstDay; i++) {
-      days.push(<div key={`e-${i}`} className="h-20 bg-muted/10 rounded-xl border border-border/20"></div>);
+      days.push(
+        <div key={`e-${i}`} className="h-24 bg-white/[0.01] rounded-xl border border-white/[0.03]"></div>
+      );
     }
 
     for (let d = 1; d <= daysInMonth; d++) {
@@ -89,32 +91,50 @@ export default function CalendarView() {
       const isToday = new Date().toDateString() === new Date(year, month, d).toDateString();
       const isPast = new Date(year, month, d) < new Date();
 
+      const dominantType = dayEvents.length > 0 ? dayEvents[0].type : null;
+      let borderGlow = '';
+      if (!isPast && !isToday && dominantType) {
+        if (dominantType === 'election') borderGlow = 'hover:border-blue-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] hover:bg-blue-500/5';
+        else if (dominantType === 'judgement') borderGlow = 'hover:border-red-500/50 hover:shadow-[0_0_20px_rgba(239,68,68,0.15)] hover:bg-red-500/5';
+        else if (dominantType === 'debate') borderGlow = 'hover:border-purple-500/50 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)] hover:bg-purple-500/5';
+        else if (dominantType === 'deadline') borderGlow = 'hover:border-orange-500/50 hover:shadow-[0_0_20px_rgba(249,115,22,0.15)] hover:bg-orange-500/5';
+      }
+
       days.push(
-        <div
+        <motion.div
+          whileHover={{ scale: isPast ? 1 : 1.03, y: isPast ? 0 : -2 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
           key={`d-${d}`}
-          className={`h-20 p-1.5 rounded-xl border flex flex-col transition-all cursor-default ${
-            isToday ? 'border-primary bg-primary/5 shadow-sm shadow-primary/20' :
-            isPast ? 'border-border/30 bg-muted/10 opacity-70' :
-            'border-border/50 bg-card hover:bg-muted/30'
+          className={`h-28 p-2.5 rounded-2xl flex flex-col transition-all cursor-default relative overflow-hidden group ${
+            isToday 
+              ? 'border border-primary/50 bg-gradient-to-b from-primary/20 to-primary/5 shadow-[0_0_30px_rgba(59,130,246,0.25)] ring-1 ring-primary/30 z-20' 
+              : isPast 
+                ? 'border border-white/[0.03] bg-black/20 opacity-50' 
+                : `border border-white/[0.08] bg-black/40 backdrop-blur-sm ${borderGlow || 'hover:border-white/[0.2] hover:bg-white/[0.04]'}`
           }`}
         >
-          <span className={`text-xs font-semibold self-start px-1 ${isToday ? 'text-primary' : isPast ? 'text-muted-foreground/60' : 'text-foreground'}`}>{d}</span>
-          <div className="mt-0.5 space-y-0.5 overflow-hidden">
+          {isToday && <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/30 via-transparent to-transparent pointer-events-none" />}
+          
+          <span className={`text-sm font-extrabold self-end z-10 ${isToday ? 'text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]' : isPast ? 'text-white/20' : 'text-white/80 group-hover:text-white transition-colors'}`}>{d}</span>
+          
+          <div className="mt-1.5 space-y-1.5 overflow-hidden z-10 w-full flex-1">
             {dayEvents.slice(0, 2).map(ev => (
-              <div
-                key={ev.id}
-                onClick={() => { setSelectedEvent(ev); setActiveTab('calendar'); }}
-                className={`text-[9px] px-1 py-0.5 rounded cursor-pointer truncate border font-medium ${TYPE_STYLES[ev.type]}`}
-                title={ev.title}
-              >
-                {ev.title}
-              </div>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  key={ev.id}
+                  onClick={() => { setSelectedEvent(ev); setActiveTab('calendar'); }}
+                  className={`text-[10px] px-2 py-1 rounded-full cursor-pointer truncate border font-semibold flex items-center space-x-1.5 hover:brightness-150 transition-all shadow-md backdrop-blur-md ${TYPE_STYLES[ev.type]}`}
+                  title={ev.title}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-current shadow-[0_0_5px_currentColor] flex-shrink-0" />
+                  <span className="truncate tracking-tight">{ev.title}</span>
+                </motion.div>
             ))}
             {dayEvents.length > 2 && (
-              <div className="text-[9px] text-muted-foreground px-1">+{dayEvents.length - 2} more</div>
+              <div className="text-[9px] text-muted-foreground px-1.5 font-medium">+ {dayEvents.length - 2} more</div>
             )}
           </div>
-        </div>
+        </motion.div>
       );
     }
     return days;
@@ -141,10 +161,15 @@ export default function CalendarView() {
       </AnimatePresence>
 
       {/* LEFT: Calendar */}
-      <div className="flex-[3] bg-card border border-border rounded-2xl flex flex-col overflow-hidden min-w-0">
+      <div className="flex-[3] glass-card rounded-3xl border border-white/[0.08] flex flex-col overflow-hidden min-w-0 shadow-2xl relative">
+        {/* Subtle dot pattern over the whole left panel */}
+        <div 
+          className="absolute inset-0 pointer-events-none opacity-50 z-0" 
+          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='2' cy='2' r='1'/%3E%3C/g%3E%3C/svg%3E")` }} 
+        />
         
         {/* Tabs */}
-        <div className="flex border-b border-border">
+        <div className="flex border-b border-white/[0.08] relative z-10 bg-black/20 backdrop-blur-md">
           {[
             { key: 'calendar', label: 'Calendar', icon: CalendarClock },
             { key: 'upcoming', label: `Upcoming (${upcomingEvents.length})`, icon: BellRing },
@@ -152,7 +177,7 @@ export default function CalendarView() {
           ].map(({ key, label, icon: Icon }) => (
             <button
               key={key}
-              onClick={() => setActiveTab(key as any)}
+              onClick={() => setActiveTab(key as 'calendar' | 'upcoming' | 'past')}
               className={`flex items-center space-x-1.5 px-4 py-3 text-xs font-medium border-b-2 transition-colors ${
                 activeTab === key
                   ? 'border-primary text-primary'
@@ -167,26 +192,29 @@ export default function CalendarView() {
 
         {/* Calendar View */}
         {activeTab === 'calendar' && (
-          <div className="flex flex-col flex-1 p-4 overflow-y-auto">
+          <div className="flex flex-col flex-1 p-4 overflow-y-auto relative">
+            {/* Ambient Background Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+            
             {/* Header */}
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-foreground">
-                {monthNames[currentDate.getMonth()]} <span className="text-muted-foreground">{currentDate.getFullYear()}</span>
+            <div className="flex justify-between items-center mb-6 relative z-10">
+              <h2 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60 drop-shadow-sm">
+                {monthNames[currentDate.getMonth()]} <span className="text-primary/80 font-medium">{currentDate.getFullYear()}</span>
               </h2>
-              <div className="flex items-center space-x-1">
-                <button onClick={prevMonth} className="p-2 rounded-lg bg-muted text-muted-foreground hover:text-foreground transition-colors"><ChevronLeft className="w-4 h-4" /></button>
-                <button onClick={goToToday} className="px-3 py-1.5 rounded-lg bg-muted text-xs font-medium text-foreground hover:bg-muted/80 transition-colors">Today</button>
-                <button onClick={nextMonth} className="p-2 rounded-lg bg-muted text-muted-foreground hover:text-foreground transition-colors"><ChevronRight className="w-4 h-4" /></button>
+              <div className="flex items-center space-x-1.5 bg-black/30 p-1.5 rounded-2xl border border-white/[0.05] backdrop-blur-sm">
+                <button onClick={prevMonth} className="p-2 rounded-xl text-muted-foreground hover:bg-white/10 hover:text-foreground transition-all"><ChevronLeft className="w-5 h-5" /></button>
+                <button onClick={goToToday} className="px-4 py-2 rounded-xl text-xs font-bold text-foreground hover:bg-white/10 hover:shadow-lg transition-all tracking-wide uppercase">Today</button>
+                <button onClick={nextMonth} className="p-2 rounded-xl text-muted-foreground hover:bg-white/10 hover:text-foreground transition-all"><ChevronRight className="w-5 h-5" /></button>
               </div>
             </div>
             {/* Day headers */}
-            <div className="grid grid-cols-7 gap-1 mb-1">
+            <div className="grid grid-cols-7 gap-3 mb-3 relative z-10">
               {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
-                <div key={d} className="text-center text-[10px] font-semibold text-muted-foreground uppercase tracking-wider py-1">{d}</div>
+                <div key={d} className="text-center text-[11px] font-extrabold text-white/50 uppercase tracking-widest py-2 bg-black/20 rounded-xl border border-white/[0.05] backdrop-blur-md">{d}</div>
               ))}
             </div>
             {/* Grid */}
-            <div className="grid grid-cols-7 gap-1 auto-rows-max">
+            <div className="grid grid-cols-7 gap-3 auto-rows-max relative z-10">
               {renderCalendarDays()}
             </div>
             {/* Legend */}
@@ -231,10 +259,12 @@ export default function CalendarView() {
       </div>
 
       {/* RIGHT: Detail Panel */}
-      <div className="xl:w-80 bg-card border border-border rounded-2xl flex flex-col overflow-hidden flex-shrink-0">
-        <div className="p-4 border-b border-border">
-          <h3 className="font-bold text-foreground text-sm">Event Details</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">Showing data for {country}</p>
+      <div className="xl:w-96 glass-card rounded-3xl border border-white/[0.08] flex flex-col overflow-hidden flex-shrink-0 shadow-2xl relative">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[80px] rounded-full pointer-events-none" />
+        
+        <div className="p-5 border-b border-white/[0.08] relative z-10 bg-black/20 backdrop-blur-md">
+          <h3 className="font-extrabold text-white text-base">Event Details</h3>
+          <p className="text-xs text-white/50 mt-1">Showing data for {country}</p>
         </div>
 
         {selectedEvent ? (
@@ -291,6 +321,7 @@ function EventListCard({ event, reminders, onToggleReminder, onSelect, isPast }:
   onSelect: (e: ElectionEvent) => void;
   isPast?: boolean;
 }) {
+  const [now] = useState(() => Date.now());
   const isReminded = reminders.includes(event.id);
   return (
     <motion.div
@@ -304,7 +335,7 @@ function EventListCard({ event, reminders, onToggleReminder, onSelect, isPast }:
         <p className="text-sm font-medium text-foreground truncate">{event.title}</p>
         <p className="text-[11px] text-muted-foreground mt-0.5">
           {new Date(event.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-          {!isPast && ` · ${Math.ceil((new Date(event.date).getTime() - Date.now()) / 86400000)} days away`}
+          {!isPast && ` · ${Math.ceil((new Date(event.date).getTime() - now) / 86400000)} days away`}
         </p>
       </div>
       <button

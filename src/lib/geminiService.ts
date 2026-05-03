@@ -68,15 +68,17 @@ class GeminiService {
       const result = await chat.sendMessage(prompt);
       const response = await result.response;
       return response.text();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[GeminiService Error]:", error);
       
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
       // Handle Quota / Rate Limit errors (HTTP 429)
-      if (error.message?.includes("429") || error.message?.includes("quota")) {
+      if (errorMessage.includes("429") || errorMessage.includes("quota")) {
         throw new Error("RATE_LIMIT_EXCEEDED");
       }
       
-      throw new Error(`AI_GENERATION_FAILED: ${error.message}`);
+      throw new Error(`AI_GENERATION_FAILED: ${errorMessage}`);
     }
   }
 
@@ -94,7 +96,7 @@ class GeminiService {
       const result = await this.model.generateContent(prompt);
       const response = await result.response;
       return response.text();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[GeminiService Quick Error]:", error);
       throw error;
     }
