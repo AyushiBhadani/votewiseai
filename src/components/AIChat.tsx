@@ -152,6 +152,7 @@ export default function AIChat() {
     <div className="flex flex-col h-full glass-card rounded-2xl overflow-hidden">
       <ChatHeader 
         mode={mode} setMode={setMode} geminiModel={geminiModel} language={language}
+        country={country}
         isAudioEnabled={isAudioEnabled} toggleAudio={toggleAudio} isSpeaking={isSpeaking}
         stopSpeaking={stopSpeaking} handleNewChat={() => {setMessages([]); setActiveConversationId(null);}}
         setIsGuideOpen={setIsGuideOpen} handleExplainSimply={handleExplainSimply} hasMessages={messages.length > 0}
