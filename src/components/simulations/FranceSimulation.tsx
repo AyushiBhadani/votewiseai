@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { playPaperRustle } from './simulationSounds';
 
 const CANDIDATES = ["Candidate Blue", "Candidate Red"];
 
@@ -26,7 +27,7 @@ export const FranceSimulation = ({ onVoteCast }: { onVoteCast: (vote: string) =>
               {CANDIDATES.map(c => (
                 <button
                   key={c}
-                  onClick={() => { setSelected(c); setStep(2); }}
+                  onClick={() => { setSelected(c); playPaperRustle(); setStep(2); }}
                   className="bg-white border-2 border-slate-200 p-4 shadow-sm hover:border-primary hover:shadow-md transition-all text-sm font-bold text-center"
                 >
                   {c}

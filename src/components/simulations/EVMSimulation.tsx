@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { playEVMBeep } from './simulationSounds';
 
 const EVM_CANDIDATES = [
   { name: "Aarav Sharma", symbol: "🌟" },
@@ -11,46 +11,9 @@ const EVM_CANDIDATES = [
 export const EVMSimulation = ({ onVoteCast }: { onVoteCast: (vote: string) => void }) => {
   const [selected, setSelected] = useState<string | null>(null);
 
-  const playBeep = async () => {
-    try {
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-
-      // Some browsers suspend audio until user gesture — resume it
-      if (audioCtx.state === 'suspended') {
-        await audioCtx.resume();
-      }
-
-      // Play two short electronic beeps like a real EVM
-      const playTone = (startTime: number, duration: number) => {
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-
-        oscillator.type = 'square'; // Sharp electronic sound
-        oscillator.frequency.setValueAtTime(1200, startTime);
-
-        gainNode.gain.setValueAtTime(0.8, startTime); // Much louder
-        gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-
-        oscillator.start(startTime);
-        oscillator.stop(startTime + duration);
-      };
-
-      // Beep 1 at time 0, Beep 2 at time 0.25s
-      playTone(audioCtx.currentTime, 0.18);
-      playTone(audioCtx.currentTime + 0.25, 0.18);
-
-    } catch (e) {
-      console.log("Audio not supported", e);
-    }
-  };
-
   const handleVote = (candidate: string) => {
     setSelected(candidate);
-    playBeep();
-    // Simulate the EVM light staying on for 2 seconds before confirmation
+    playEVMBeep();
     setTimeout(() => {
       onVoteCast(candidate);
     }, 1500);

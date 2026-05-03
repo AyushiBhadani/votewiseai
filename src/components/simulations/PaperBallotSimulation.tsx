@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { playStampThud } from './simulationSounds';
 
 const CANDIDATES = [
   { name: "John Doe", party: "Independent" },
@@ -45,7 +46,7 @@ export const PaperBallotSimulation = ({
               name="ballot" 
               className="hidden" 
               checked={selected === c.name}
-              onChange={() => { setSelected(c.name); setWriteIn(''); }}
+              onChange={() => { setSelected(c.name); setWriteIn(''); playStampThud(); }}
             />
             <div className="flex-1">
               <span className="block font-bold text-sm uppercase">{c.name}</span>

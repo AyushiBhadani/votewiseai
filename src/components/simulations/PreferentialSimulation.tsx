@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { playPencilScratch } from './simulationSounds';
 
 const CANDIDATES = ["Party Alpha", "Party Beta", "Party Gamma"];
 
@@ -14,6 +14,7 @@ export const PreferentialSimulation = ({ onVoteCast }: { onVoteCast: (vote: stri
     });
     newRankings[candidate] = rank;
     setRankings(newRankings);
+    playPencilScratch(); // Pencil scratch sound when writing a number
   };
 
   const isComplete = Object.keys(rankings).length === CANDIDATES.length;
