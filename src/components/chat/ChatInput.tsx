@@ -12,8 +12,8 @@ interface ChatInputProps {
   language: string;
   country: string;
   mode: 'chat' | 'story';
-  fileInputRef: React.RefObject<HTMLInputElement>;
-  inputRef: React.RefObject<HTMLInputElement>;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
+  inputRef: React.RefObject<HTMLInputElement | null>;
   selectedFile: { file: File; base64: string; preview: string } | null;
   setSelectedFile: (file: any) => void;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;

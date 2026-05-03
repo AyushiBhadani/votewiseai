@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI, GenerativeModel, Content } from "@google/genai";
+import { GoogleGenerativeAI, GenerativeModel, Content } from "@google/generative-ai";
 
 /**
  * GeminiService

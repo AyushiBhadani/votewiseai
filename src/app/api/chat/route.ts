@@ -192,7 +192,7 @@ LANGUAGE: ${langInstruction}`;
     );
 
     // ── Generate response using Service ────────────────────────
-    responseText = await gemini.generateResponse(
+    const responseText = await gemini.generateResponse(
       sanitizedMessage,
       conversationHistory as any, // Cast to compatible Content type
       systemPrompt
@@ -211,12 +211,10 @@ LANGUAGE: ${langInstruction}`;
     let imagePrompt: string | null = null;
     if (safeMode === 'story') {
       try {
-        const imgRes = await ai.models.generateContent({
-          model: activeModel,
-          contents: `Write a SHORT image prompt (max 15 words, no faces, safe for all ages, flat colorful illustration) for this election story: "${responseText.slice(0, 300)}"`,
-          config: { temperature: 0.6 },
-        });
-        imagePrompt = imgRes.text?.trim().replace(/['"]/g, '') ?? null;
+        const imagePromptText = await gemini.generateQuickAnswer(
+          `Write a SHORT image prompt (max 15 words, no faces, safe for all ages, flat colorful illustration) for this election story: "${responseText.slice(0, 300)}"`
+        );
+        imagePrompt = imagePromptText?.trim().replace(/['"]/g, '') ?? null;
       } catch {
         // Image prompt is non-critical — don't fail the whole request
         imagePrompt = null;

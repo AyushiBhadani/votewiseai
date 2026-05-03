@@ -1,7 +1,7 @@
 import { getGeminiService } from '../geminiService';
 
 // Mock the GoogleGenerativeAI SDK
-jest.mock('@google/genai', () => ({
+jest.mock('@google/generative-ai', () => ({
   GoogleGenerativeAI: jest.fn().mockImplementation(() => ({
     getGenerativeModel: jest.fn().mockImplementation(() => ({
       startChat: jest.fn().mockImplementation(() => ({
