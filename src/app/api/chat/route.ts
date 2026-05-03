@@ -1,3 +1,22 @@
+/**
+ * @module /api/chat
+ * @description
+ * VoteWise AI Chat API Route — POST handler.
+ * 
+ * Accepts a user message and returns an AI-generated response using Google Gemini.
+ * Features:
+ * - Intent detection (registration, process, timeline, comparison, story)
+ * - Per-IP rate limiting (20 requests/min)
+ * - Response caching to reduce quota usage
+ * - Input sanitization and length validation
+ * - 16-language support
+ * - Story mode with AI-generated image prompts
+ * 
+ * @security
+ * - All user input is sanitized before passing to the AI model
+ * - Responses include Cache-Control: no-store
+ * - Rate limit: 20 req/min/IP
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import {
   detectIntent,
@@ -17,6 +36,12 @@ const rateLimitMap = new Map<string, { count: number; reset: number }>();
 const RATE_LIMIT = 20;          // max requests
 const RATE_WINDOW_MS = 60_000;  // per 60 seconds per IP
 
+/**
+ * Checks whether an IP address has exceeded the rate limit.
+ * Uses a sliding window stored in memory.
+ * @param ip - The client's IP address (from x-forwarded-for header).
+ * @returns true if the request should be blocked, false if allowed.
+ */
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
   const entry = rateLimitMap.get(ip);
