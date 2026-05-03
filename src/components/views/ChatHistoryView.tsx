@@ -51,7 +51,8 @@ export default function ChatHistoryView() {
 
   const formatDate = (timestamp: unknown) => {
     if (!timestamp) return '';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const ts = timestamp as { toDate?: () => Date };
+    const date = ts.toDate ? ts.toDate() : new Date(timestamp as string | number);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffHours = diffMs / (1000 * 60 * 60);

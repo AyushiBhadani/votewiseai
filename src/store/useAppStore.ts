@@ -25,8 +25,7 @@ interface AppState {
 
 export const useAppStore = create<AppState>()(
   persist(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (set: any) => ({
+    (set) => ({
       country: 'India',
       language: 'English',
       geminiModel: 'gemini-2.0-flash',
