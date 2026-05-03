@@ -3,12 +3,13 @@
 import React, { useState, useCallback } from 'react';
 import Modal from '@/components/Modal';
 import { useAppStore } from '@/store/useAppStore';
-import { RefreshCw, Laugh, BookOpen, Vote } from 'lucide-react';
+import { RefreshCw, Laugh, BookOpen, Vote, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EVMSimulation } from './simulations/EVMSimulation';
 import { PreferentialSimulation } from './simulations/PreferentialSimulation';
 import { FranceSimulation } from './simulations/FranceSimulation';
 import { PaperBallotSimulation } from './simulations/PaperBallotSimulation';
+import VotingStepsGuide from './VotingStepsGuide';
 
 // ─── MEMES ────────────────────────────────────────────────
 const MEMES = [
@@ -44,7 +45,7 @@ const COUNTRY_FACTS: Record<string, { title: string; body: string; constitution:
 };
 
 export default function CardsRow() {
-  const [activeModal, setActiveModal] = useState<'meme' | 'knowledge' | 'simulation' | null>(null);
+  const [activeModal, setActiveModal] = useState<'meme' | 'knowledge' | 'simulation' | 'guide' | null>(null);
   const [memeIndex, setMemeIndex] = useState(0);
   const [memeDirection, setMemeDirection] = useState(1);
   const [simVote, setSimVote] = useState<string | null>(null);
@@ -110,6 +111,25 @@ export default function CardsRow() {
           </div>
           <span className="text-xs font-medium text-primary underline underline-offset-2 mt-2 inline-block hover:text-primary/80">
             Explore Facts →
+          </span>
+        </motion.div>
+
+        {/* ── Step Guide Card ── */}
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          onClick={() => setActiveModal('guide')}
+          className="w-[85vw] sm:w-[280px] md:w-auto flex-shrink-0 snap-center rounded-2xl p-4 border border-rose-500/20 flex flex-col justify-between cursor-pointer bg-gradient-to-br from-rose-500/20 to-pink-500/10 glow-hover"
+        >
+          <div>
+            <div className="flex items-center space-x-2 mb-1">
+              <MapPin className="w-4 h-4 text-rose-400" />
+              <h4 className="font-semibold text-sm text-foreground">Step-by-Step Guide</h4>
+            </div>
+            <p className="font-bold text-xs text-rose-400 mb-2">How to Vote in {country}</p>
+            <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">5 illustrated steps showing exactly how to register, find your booth, and cast your vote.</p>
+          </div>
+          <span className="text-xs font-medium text-rose-400 underline underline-offset-2 mt-2 inline-block hover:text-rose-300">
+            Start Guide →
           </span>
         </motion.div>
 
@@ -256,6 +276,11 @@ export default function CardsRow() {
             </motion.div>
           )}
         </div>
+      </Modal>
+
+      {/* ── GUIDE MODAL ── */}
+      <Modal isOpen={activeModal === 'guide'} onClose={closeModal} title={`🗺️ How to Vote in ${country}`}>
+        <VotingStepsGuide onClose={closeModal} />
       </Modal>
     </>
   );
